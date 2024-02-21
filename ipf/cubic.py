@@ -276,12 +276,9 @@ class IPF:
         self.m_001_101 = Math.linear_slope(self.p001_x, self.p001_y, self.p101_x, self.p101_y)
         self.b_001_101 = Math.linear_y_intercept(self.m_001_101, self.p101_x, self.p101_y)
 
-        self.eta_p001 = self.calc_phi(self.p001_x, self.p001_y, np.array(([0, 1])))
-        self.eta_p101 = self.calc_phi(self.p101_x, self.p101_y, np.array(([0, 1])))
-        self.eta_p111 = self.calc_phi(self.p111_x, self.p111_y, np.array(([0, 1])))
-
-        phi = np.array([0, 1])
-        self.phi_reference = phi / np.linalg.norm(phi)
+        self.eta_p001 = self.bary_azimuthal(self.p001_x, self.p001_y)
+        self.eta_p101 = self.bary_azimuthal(self.p101_x, self.p101_y)
+        self.eta_p111 = self.bary_azimuthal(self.p111_x, self.p111_y)
 
         self.symmetry_operations = symmetry_operations()
 
@@ -329,7 +326,8 @@ class IPF:
 
     def unit_vector_to_ipf_xy(self, v):
         """
-        Determines the inverse pole-figure position for a given orientation matrix g and sample direction h.
+        Determines the inverse pole-figure position for a given orientation matrix g
+        and sample direction h.
 
         :param g: Orientation matrix
         :param h: Sample direction
@@ -377,7 +375,6 @@ class IPF:
         while True:
             x_temp += dx
             y_temp += m * dx
-            dx_array = self.curve_xs - x_temp
             x_temp_idx = np.argmin(np.abs(self.curve_xs - x_temp))
             y_hkl = self.curve_ys[x_temp_idx]
 
@@ -385,31 +382,38 @@ class IPF:
                 return x_temp, y_temp
 
             if x_temp > self.p101_x*1.1:
-                # TODO: This condition is entered in rare cases, probably due to bad rounding at some places
-                print("Cannot find intersection of sst and linear curve. x: {}\ty: {}, returning x, y from p101".format(px, py))
+                # TODO: This condition is entered in rare cases, probably due to bad rounding
+                #  at some places
+                print("Cannot find intersection of sst and linear curve. "
+                      "x: {}\ty: {}, returning x, y from p101".format(px, py))
+
                 return self.p101_x, self.p101_y
 
-    def calc_phi(self, px, py, reference):
-        v1_temp = reference
+    def bary_azimuthal(self, px, py):
+        v1_temp = np.array([0, 1])
+
         x_temp = px - self.bary_x
         y_temp = py - self.bary_y
+
         v2_temp = np.array([x_temp, y_temp])
 
-        phi = Math.angle_between_vectors(v1_temp, v2_temp)
+        azimuthal = Math.angle_between_vectors(v1_temp, v2_temp)
         if px > self.bary_x:
-            phi = 2 * np.pi - phi
+            azimuthal = 2 * np.pi - azimuthal
 
-        return phi
+        return azimuthal
 
-    def calc_color_phi(self, px, py):
-        phi = self.calc_phi(px, py, self.phi_reference)
-        # phi += np.pi / 4
-        if phi > (2 * np.pi):
-            phi -= 2 * np.pi
-        phi /= (2 * np.pi)
-        return phi
+    def hsl_hue(self, px, py):
+        hue = self.bary_azimuthal(px, py)
 
-    def calc_color_theta(self, px, py, intersect_x, intersect_y):
+        if hue > (2 * np.pi):
+            hue -= 2 * np.pi
+
+        hue /= (2 * np.pi)
+
+        return hue
+
+    def hsl_lightness(self, px, py, intersect_x, intersect_y):
         dx_temp = intersect_x - self.bary_x
         dy_temp = intersect_y - self.bary_y
         d_full = np.hypot(dx_temp, dy_temp)
@@ -418,11 +422,11 @@ class IPF:
         dy_temp = py - self.bary_y
         d_partial = np.hypot(dx_temp, dy_temp)
 
-        # Normalization still unclear, theta should be in range [0, pi/2]
+        # Normalization still unclear, lightness should be in range [0, pi/2]
         # But matplotlib wants [0, 1]
-        # theta = d_partial / d_full * (np.pi / 2)
-        theta = d_partial / d_full
-        return theta
+        # lightness = d_partial / d_full * (np.pi / 2)
+        lightness = d_partial / d_full
+        return lightness
 
     def h1l_from_pxy(self, px, py):
         """"
@@ -434,7 +438,7 @@ class IPF:
         m = Math.linear_slope(self.bary_x, self.bary_y, px, py)
         b = Math.linear_y_intercept(m, px, py)
 
-        angle = self.calc_phi(px, py, self.phi_reference)
+        angle = self.bary_azimuthal(px, py)
         angle_round = round(angle, 2)
 
         eta_p001 = round(self.eta_p001, 2)
@@ -448,9 +452,9 @@ class IPF:
         else:
             intersect_x, intersect_y = Math.linear_intersection(m, self.m_001_111, b, self.b_001_111)
 
-        theta = self.calc_color_theta(px, py, intersect_x, intersect_y)
-        phi = self.calc_color_phi(px, py)
-        return phi, 1., theta
+        hue = self.hsl_hue(px, py)
+        lightness = self.hsl_lightness(px, py, intersect_x, intersect_y)
+        return hue, 1., lightness
 
     def rgb_from_pxy(self, px, py, check_value_space=True):
         """
@@ -505,38 +509,6 @@ class IPF:
             return True
         else:
             return False
-
-    @staticmethod
-    def hsl_to_rgb(hsl):
-        """
-        Converts a color from HSL to RGB.
-
-        :param hsl: (hue, saturation, lightning).
-        """
-        h, s, l = hsl[0], hsl[1], hsl[2]
-        c = (1 - np.abs(2 * l - 1)) * s
-        x = c * (1 - np.abs(h / 60))
-
-        m = l - (c / 2)
-
-        if (h >= 0) and (h < 60):
-            rgb_tilde = (c, x, 0)
-        elif (h >= 60) and (h < 120):
-            rgb_tilde = (x, c, 0)
-        elif (h >= 120) and (h < 180):
-            rgb_tilde = (0, c, x)
-        elif (h >= 180) and (h < 240):
-            rgb_tilde = (0, x, c)
-        elif (h >= 240) and (h < 300):
-            rgb_tilde = (x, 0, c)
-        elif (h >= 300) and (h < 360):
-            rgb_tilde = (c, 0, x)
-        else:
-            raise Exception("Unhandled value for h: {}".format(h))
-
-        rgb = (np.array(rgb_tilde) + m)
-
-        return rgb
 
 
 class Plots:
