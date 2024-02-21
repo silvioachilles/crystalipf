@@ -1,173 +1,116 @@
-import os
-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
 
 
-class Symmetry:
-    @staticmethod
-    def CubicSym():
-        # Applying 24 Crystal Symmetry elements O[432] to the orientation matrix
-        Sym_crys = np.zeros((3, 3, 24))
-        # 1
-        Sym_crys[0, 0, 0] = 1
-        Sym_crys[1, 1, 0] = 1
-        Sym_crys[2, 2, 0] = 1
-        # 2
-        Sym_crys[0, 0, 2] = 1
-        Sym_crys[1, 1, 2] = -1
-        Sym_crys[2, 2, 2] = -1
-        # 3
-        Sym_crys[0, 0, 6] = -1
-        Sym_crys[1, 1, 6] = 1
-        Sym_crys[2, 2, 6] = -1
-        # 4
-        Sym_crys[0, 0, 7] = -1
-        Sym_crys[1, 1, 7] = -1
-        Sym_crys[2, 2, 7] = 1
-        # 5
-        Sym_crys[0, 0, 1] = 1
-        Sym_crys[1, 2, 1] = -1
-        Sym_crys[2, 1, 1] = 1
-        # 6
-        Sym_crys[0, 1, 9] = -1
-        Sym_crys[1, 0, 9] = 1
-        Sym_crys[2, 2, 9] = 1
-        # 7
-        Sym_crys[0, 2, 4] = -1
-        Sym_crys[1, 1, 4] = 1
-        Sym_crys[2, 0, 4] = 1
-        # 8
-        Sym_crys[0, 2, 17] = 1
-        Sym_crys[1, 0, 17] = 1
-        Sym_crys[2, 1, 17] = 1
-        # 9
-        Sym_crys[0, 1, 16] = 1
-        Sym_crys[1, 2, 16] = 1
-        Sym_crys[2, 0, 16] = 1
-        # 10
-        Sym_crys[0, 2, 20] = 1
-        Sym_crys[1, 1, 20] = -1
-        Sym_crys[2, 0, 20] = 1
-        # 11
-        Sym_crys[0, 0, 3] = 1
-        Sym_crys[1, 2, 3] = 1
-        Sym_crys[2, 1, 3] = -1
-        # 12
-        Sym_crys[0, 2, 5] = 1
-        Sym_crys[1, 1, 5] = 1
-        Sym_crys[2, 0, 5] = -1
-        # 13
-        Sym_crys[0, 1, 8] = 1
-        Sym_crys[1, 0, 8] = -1
-        Sym_crys[2, 2, 8] = 1
-        # 14
-        Sym_crys[0, 1, 23] = -1
-        Sym_crys[1, 0, 23] = -1
-        Sym_crys[2, 2, 23] = -1
-        # 15
-        Sym_crys[0, 0, 21] = -1
-        Sym_crys[1, 2, 21] = -1
-        Sym_crys[2, 1, 21] = -1
-        # 16
-        Sym_crys[0, 2, 22] = -1
-        Sym_crys[1, 1, 22] = -1
-        Sym_crys[2, 0, 22] = -1
-        # 17
-        Sym_crys[0, 1, 18] = 1
-        Sym_crys[1, 0, 18] = 1
-        Sym_crys[2, 2, 18] = -1
-        # 18
-        Sym_crys[0, 1, 14] = 1
-        Sym_crys[1, 2, 14] = -1
-        Sym_crys[2, 0, 14] = -1
-        # 19
-        Sym_crys[0, 1, 12] = -1
-        Sym_crys[1, 2, 12] = -1
-        Sym_crys[2, 0, 12] = 1
-        # 20
-        Sym_crys[0, 1, 10] = -1
-        Sym_crys[1, 2, 10] = 1
-        Sym_crys[2, 0, 10] = -1
-        # 21
-        Sym_crys[0, 2, 13] = -1
-        Sym_crys[1, 0, 13] = 1
-        Sym_crys[2, 1, 13] = -1
-        # 22
-        Sym_crys[0, 2, 15] = -1
-        Sym_crys[1, 0, 15] = -1
-        Sym_crys[2, 1, 15] = 1
-        # 23
-        Sym_crys[0, 2, 11] = 1
-        Sym_crys[1, 0, 11] = -1
-        Sym_crys[2, 1, 11] = -1
-        # 24
-        Sym_crys[0, 0, 19] = -1
-        Sym_crys[1, 2, 19] = 1
-        Sym_crys[2, 1, 19] = 1
+def symmetry_operations():
+    # Applying 24 Crystal Symmetry elements O[432] to the orientation matrix
+    Sym_crys = np.zeros((24, 3, 3))
+    # 1
+    Sym_crys[0, 0, 0] = 1
+    Sym_crys[0, 1, 1] = 1
+    Sym_crys[0, 2, 2] = 1
+    # 2
+    Sym_crys[2, 0, 0] = 1
+    Sym_crys[2, 1, 1] = -1
+    Sym_crys[2, 2, 2] = -1
+    # 3
+    Sym_crys[6, 0, 0] = -1
+    Sym_crys[6, 1, 1] = 1
+    Sym_crys[6, 2, 2] = -1
+    # 4
+    Sym_crys[7, 0, 0] = -1
+    Sym_crys[7, 1, 1] = -1
+    Sym_crys[7, 2, 2] = 1
+    # 5
+    Sym_crys[1, 0, 0] = 1
+    Sym_crys[1, 1, 2] = -1
+    Sym_crys[1, 2, 1] = 1
+    # 6
+    Sym_crys[9, 0, 1] = -1
+    Sym_crys[9, 1, 0] = 1
+    Sym_crys[9, 2, 2] = 1
+    # 7
+    Sym_crys[4, 0, 2] = -1
+    Sym_crys[4, 1, 1] = 1
+    Sym_crys[4, 2, 0] = 1
+    # 8
+    Sym_crys[17, 0, 2] = 1
+    Sym_crys[17, 1, 0] = 1
+    Sym_crys[17, 2, 1] = 1
+    # 9
+    Sym_crys[16, 0, 1] = 1
+    Sym_crys[16, 1, 2] = 1
+    Sym_crys[16, 2, 0] = 1
+    # 10
+    Sym_crys[20, 0, 2] = 1
+    Sym_crys[20, 1, 1] = -1
+    Sym_crys[20, 2, 0] = 1
+    # 11
+    Sym_crys[3, 0, 0] = 1
+    Sym_crys[3, 1, 2] = 1
+    Sym_crys[3, 2, 1] = -1
+    # 12
+    Sym_crys[5, 0, 2] = 1
+    Sym_crys[5, 1, 1] = 1
+    Sym_crys[5, 2, 0] = -1
+    # 13
+    Sym_crys[8, 0, 1] = 1
+    Sym_crys[8, 1, 0] = -1
+    Sym_crys[8, 2, 2] = 1
+    # 14
+    Sym_crys[23, 0, 1] = -1
+    Sym_crys[23, 1, 0] = -1
+    Sym_crys[23, 2, 2] = -1
+    # 15
+    Sym_crys[21, 0, 0] = -1
+    Sym_crys[21, 1, 2] = -1
+    Sym_crys[21, 2, 1] = -1
+    # 16
+    Sym_crys[22, 0, 2] = -1
+    Sym_crys[22, 1, 1] = -1
+    Sym_crys[22, 2, 0] = -1
+    # 17
+    Sym_crys[18, 0, 1] = 1
+    Sym_crys[18, 1, 0] = 1
+    Sym_crys[18, 2, 2] = -1
+    # 18
+    Sym_crys[14, 0, 1] = 1
+    Sym_crys[14, 1, 2] = -1
+    Sym_crys[14, 2, 0] = -1
+    # 19
+    Sym_crys[12, 0, 1] = -1
+    Sym_crys[12, 1, 2] = -1
+    Sym_crys[12, 2, 0] = 1
+    # 20
+    Sym_crys[10, 0, 1] = -1
+    Sym_crys[10, 1, 2] = 1
+    Sym_crys[10, 2, 0] = -1
+    # 21
+    Sym_crys[13, 0, 2] = -1
+    Sym_crys[13, 1, 0] = 1
+    Sym_crys[13, 2, 1] = -1
+    # 22
+    Sym_crys[15, 0, 2] = -1
+    Sym_crys[15, 1, 0] = -1
+    Sym_crys[15, 2, 1] = 1
+    # 23
+    Sym_crys[11, 0, 2] = 1
+    Sym_crys[11, 1, 0] = -1
+    Sym_crys[11, 2, 1] = -1
+    # 24
+    Sym_crys[19, 0, 0] = -1
+    Sym_crys[19, 1, 2] = 1
+    Sym_crys[19, 2, 1] = 1
 
-        return Sym_crys
+    return Sym_crys
 
 
-class SST:
-
-
-class IPF:
-    def __init__(self):
-        self.ipfcolor = IPFColor()
-
-    @staticmethod
-    def reciprocal_vector(
-            h, k, l,
-            a1=np.array([1, 0, 0], dtype=np.float32),
-            a2=np.array([0, 1, 0], dtype=np.float32),
-            a3=np.array([0, 0, 1], dtype=np.float32),
-    ):
-        """
-        Calculates the reciprocal vector for a given set of Miller indices and a primitive lattice.
-
-        :param h: Miller index
-        :param k: Miller index
-        :param l: Miller index
-        :param a1: Primitive lattice vector
-        :param a2: Primitive lattice vector
-        :param a3: Primitive lattice vector
-        :return: reciprocal vector
-        """
-        norm = np.dot(a1, np.cross(a2, a3))
-
-        b1 = np.cross(a2, a3) / norm
-        b2 = np.cross(a3, a1) / norm
-        b3 = np.cross(a1, a2) / norm
-
-        Ghkl = h * b1 + k * b2 + l * b3
-        Ghkl /= np.linalg.norm(Ghkl)
-        return Ghkl
-
-    @staticmethod
-    def cartesian_to_spherical_angles(h_x, h_y, h_z):
-        """
-        Converts a cartesian vector to spherical angles.
-
-        :param h_x: x component of the vector
-        :param h_y: y component of the vector
-        :param h_z: z component of the vector
-        """
-        if h_z < 0:
-            h_z = -h_z
-
-        if np.round(h_z, 4) == 1.0:
-            h_z = 1.0
-
-        theta = np.arccos(h_z)
-        phi = np.arctan2(h_y, h_x)
-        return theta, phi
-
+class Math:
     @staticmethod
     def project_spherical_on_plane(theta, phi):
         """
-        Stereographic projection of spherical angles onto a plane at z = 0.
+        Stereographic projection of spherical coordinates onto a plane at z = 0.
 
         :param theta: Polar angle.
         :param phi: Azimuthal angle.
@@ -185,19 +128,171 @@ class IPF:
         :param hy: y component of the vector.
         :param hz: z component of the vector.
         """
-        theta, phi = IPF.cartesian_to_spherical_angles(hx, hy, hz)
-        px, py = IPF.project_spherical_on_plane(theta, phi)
+        theta, phi = Math.cartesian_to_spherical(hx, hy, hz)
+        px, py = Math.project_spherical_on_plane(theta, phi)
         return px, py
 
-    def filter_by_xy(self, p_xs, p_ys):
+    @staticmethod
+    def cartesian_to_spherical(h_x, h_y, h_z):
+        """
+        Converts cartesian coordinates (x, y, z) to spherical coordinates (theta, phi).
 
+        :param h_x: x component of the vector
+        :param h_y: y component of the vector
+        :param h_z: z component of the vector
+        """
+        if h_z < 0:
+            h_z = -h_z
+
+        if np.round(h_z, 4) == 1.0:
+            h_z = 1.0
+
+        theta = np.arccos(h_z)
+        phi = np.arctan2(h_y, h_x)
+        return theta, phi
+
+    @staticmethod
+    def linear_slope(x1, y1, x2, y2):
+        """
+        Calculates the slope of a linear function from two points.
+
+        :param x1: x-coordinate of the first point.
+        :param y1: y-coordinate of the first point.
+        :param x2: x-coordinate of the second point.
+        :param y2: y-coordinate of the second point.
+
+        :return: Slope of the function.
+        """
+        return (y2 - y1) / (x2 - x1)
+
+    @staticmethod
+    def linear_y_intercept(m, x, y):
+        """
+        Calculates the y-intercept of a linear function.
+
+        :param m: Slope of the function.
+        :param x: x-coordinate of a point on the function.
+        :param y: y-coordinate of a point on the function.
+
+        :return: y-intercept of the function.
+        """
+        return y - m * x
+
+    @staticmethod
+    def linear_intersection(m1, m2, b1, b2):
+        """
+        Calculates the intersection of linear functions.
+
+        :param m1: Slope of the first function.
+        :param m2: Slope of the second function.
+        :param b1: y-intercept of the first function.
+        :param b2: y-intercept of the second function.
+
+        :return: x, y coordinates of the intersection.
+        """
+        x = (b2 - b1) / (m1 - m2)
+        y = m1 * x + b1
+        return x, y
+
+    @staticmethod
+    def angle_between_vectors(v1, v2):
+        """
+        Calculates the angle between two vectors.
+
+        :param v1: First vector.
+        :param v2: Second vector.
+
+        :return: Angle between the two vectors.
+        """
+        a_norm = np.linalg.norm(v1)
+        v2_norm = np.linalg.norm(v2)
+        v1v2 = np.dot(v1, v2)
+        phi = np.arccos(v1v2 / (a_norm * v2_norm))
+        return phi
+
+
+class Crystallography:
+    @staticmethod
+    def reciprocal_vector(
+            h, k, l,
+            a1=np.array([1, 0, 0], dtype=np.float32),
+            a2=np.array([0, 1, 0], dtype=np.float32),
+            a3=np.array([0, 0, 1], dtype=np.float32),
+    ):
+        """
+        Calculates the reciprocal vector for a given set of Miller indices and a primitive lattice.
+
+        :param h: Miller index
+        :param k: Miller index
+        :param l: Miller index
+        :param a1: Primitive lattice vector
+        :param a2: Primitive lattice vector
+        :param a3: Primitive lattice vector
+
+        :return: reciprocal vector
+        """
+        norm = np.dot(a1, np.cross(a2, a3))
+
+        b1 = np.cross(a2, a3) / norm
+        b2 = np.cross(a3, a1) / norm
+        b3 = np.cross(a1, a2) / norm
+
+        Ghkl = h * b1 + k * b2 + l * b3
+        Ghkl /= np.linalg.norm(Ghkl)
+        return Ghkl
+
+
+class IPF:
+    def __init__(self):
+        self.hkls = (
+            (0, 0, 1),
+            (1, 0, 1),
+            (1, 1, 1),
+        )
+        self.p001_x, self.p001_y = IPF.hkl_to_ipf_xy(*self.hkls[0])
+        self.p101_x, self.p101_y = IPF.hkl_to_ipf_xy(*self.hkls[1])
+        self.p111_x, self.p111_y = IPF.hkl_to_ipf_xy(*self.hkls[2])
+
+        # The barycenter of the standard stereographic triangle.
+        self.bary_x = np.mean([self.p001_x, self.p101_x, self.p111_x])
+        self.bary_y = np.mean([self.p001_y, self.p101_y, self.p111_y])
+
+        self.m_001_111 = Math.linear_slope(self.p001_x, self.p001_y, self.p111_x, self.p111_y)
+        self.b_001_111 = Math.linear_y_intercept(self.m_001_111, self.p111_x, self.p111_y)
+
+        curve_xs = []
+        curve_ys = []
+        hs = np.linspace(1.0, 0.0, 3000)
+        for h in hs:
+            sample_normal = Crystallography.reciprocal_vector(1, h, 1)
+            px, py = Math.project_cartesian_on_plane(*sample_normal)
+
+            curve_xs.append(px)
+            curve_ys.append(py)
+
+        self.curve_xs = np.array(curve_xs)
+        self.curve_ys = np.array(curve_ys)
+
+        self.m_001_101 = Math.linear_slope(self.p001_x, self.p001_y, self.p101_x, self.p101_y)
+        self.b_001_101 = Math.linear_y_intercept(self.m_001_101, self.p101_x, self.p101_y)
+
+        self.eta_p001 = self.calc_phi(self.p001_x, self.p001_y, np.array(([0, 1])))
+        self.eta_p101 = self.calc_phi(self.p101_x, self.p101_y, np.array(([0, 1])))
+        self.eta_p111 = self.calc_phi(self.p111_x, self.p111_y, np.array(([0, 1])))
+
+        phi = np.array([0, 1])
+        self.phi_reference = phi / np.linalg.norm(phi)
+
+        self.symmetry_operations = symmetry_operations()
+
+    def filter_by_xy(self, p_xs, p_ys):
         px_in_sst, py_in_sst = [], []
         for p_x, p_y in zip(p_xs, p_ys):
-            if self.ipfcolor.is_in_sst(p_x, p_y):
+            if self.is_in_sst(p_x, p_y):
                 px_in_sst.append(p_x)
                 py_in_sst.append(p_y)
             else:
-                self.ipfcolor.is_in_sst(p_x, p_y)
+                self.is_in_sst(p_x, p_y)
 
         if len(px_in_sst) == 0:
             raise Exception("Grain had multiple contributions before filtering and 0 afterwards. Cant be!")
@@ -222,9 +317,9 @@ class IPF:
         :param k: Miller index
         :param l: Miller index
         """
-        plane_normal = IPF.reciprocal_vector(h, k, l)
-        theta, phi = IPF.cartesian_to_spherical_angles(*plane_normal)
-        px, py = IPF.project_spherical_on_plane(theta, phi)
+        plane_normal = Crystallography.reciprocal_vector(h, k, l)
+        theta, phi = Math.cartesian_to_spherical(*plane_normal)
+        px, py = Math.project_spherical_on_plane(theta, phi)
         return px, py
 
     def g_h_to_ipf_xy(self, g, h):
@@ -244,29 +339,25 @@ class IPF:
             raise Exception("Vector is not a unit vector")
 
         # Apply symmetry
-        symmetry_matrices = Symmetry.CubicSym()
-
-        n_sym = symmetry_matrices.shape[2]
+        n_sym = self.symmetry_operations.shape[0]
         vs_applied_symmetries = np.zeros([n_sym, 3])
         thetas = np.zeros(n_sym)
         phis = np.zeros(n_sym)
 
-        for sym_idx in range(n_sym):
-            sym_matrix = symmetry_matrices[:, :, sym_idx]
+        for sym_idx, sym_op in enumerate(self.symmetry_operations):
+            v_applied_symmetry = np.dot(sym_op, v)
 
-            v_applied_symmetry = np.dot(sym_matrix, v)
-
-            # If z is lower negative, project to upper hemisphere
+            # if z is negative, project to upper hemisphere
             if v_applied_symmetry[2] < 0.:
                 v_applied_symmetry[2] *= -1
 
             vs_applied_symmetries[sym_idx] = v_applied_symmetry
 
-            theta, phi = IPF.cartesian_to_spherical_angles(*v_applied_symmetry)
+            theta, phi = Math.cartesian_to_spherical(*v_applied_symmetry)
             thetas[sym_idx] = theta
             phis[sym_idx] = phi
 
-        pxs, pys = self.project_spherical_on_plane(thetas, phis)
+        pxs, pys = Math.project_spherical_on_plane(thetas, phis)
 
         sst_xs, sst_ys = self.filter_by_xy(pxs, pys)
 
@@ -278,84 +369,6 @@ class IPF:
 
         else:
             raise Exception("More than one contribution")
-
-
-class IPFColor:
-    def __init__(self):
-        self.hkls = (
-            (0, 0, 1),
-            (1, 0, 1),
-            (1, 1, 1),
-        )
-        self.p001_x, self.p001_y = IPF.hkl_to_ipf_xy(*self.hkls[0])
-        self.p101_x, self.p101_y = IPF.hkl_to_ipf_xy(*self.hkls[1])
-        self.p111_x, self.p111_y = IPF.hkl_to_ipf_xy(*self.hkls[2])
-
-        self.bary_x, self.bary_y = self.calc_barycenter(self.hkls)
-
-        self.m_001_111 = self.calc_linear_m(self.p001_x, self.p001_y, self.p111_x, self.p111_y)
-        self.b_001_111 = self.calc_linear_b(self.m_001_111, self.p111_x, self.p111_y)
-
-        curve_xs = []
-        curve_ys = []
-        hs = np.linspace(1.0, 0.0, 3000)
-        for h in hs:
-            sample_normal = IPF.reciprocal_vector(1, h, 1)
-            px, py = IPF.project_cartesian_on_plane(*sample_normal)
-
-            curve_xs.append(px)
-            curve_ys.append(py)
-
-        self.curve_xs = np.array(curve_xs)
-        self.curve_ys = np.array(curve_ys)
-
-        self.m_001_101 = self.calc_linear_m(self.p001_x, self.p001_y, self.p101_x, self.p101_y)
-        self.b_001_101 = self.calc_linear_b(self.m_001_101, self.p101_x, self.p101_y)
-
-        self.eta_p001 = self.calc_phi(self.p001_x, self.p001_y, np.array(([0, 1])))
-        self.eta_p101 = self.calc_phi(self.p101_x, self.p101_y, np.array(([0, 1])))
-        self.eta_p111 = self.calc_phi(self.p111_x, self.p111_y, np.array(([0, 1])))
-
-        phi = np.array([0, 1])
-        self.phi_reference = phi / np.linalg.norm(phi)
-
-
-    @staticmethod
-    def calc_barycenter(hkls):
-        poles_cartesian = [IPF.reciprocal_vector(*hkl) for hkl in hkls]
-        x_temp, y_temp = [], []
-        for pole in poles_cartesian:
-            x, y = IPF.project_cartesian_on_plane(*pole)
-            x_temp.append(x)
-            y_temp.append(y)
-
-        bary_center_x = sum(x_temp) / len(x_temp)
-        bary_center_y = sum(y_temp) / len(y_temp)
-        return bary_center_x, bary_center_y
-
-    @staticmethod
-    def calc_linear_m(x1, y1, x2, y2):
-        return (y2 - y1) / (x2 - x1)
-
-    @staticmethod
-    def calc_linear_b(m, x, y):
-        return y - m * x
-
-    def get_poles(self):
-        poles_x, poles_y = [], []
-        for hkl in self.hkls:
-            hkl_normal = IPF.reciprocal_vector(*hkl)
-            px, py = IPF.project_cartesian_on_plane(*hkl_normal)
-            poles_x.append(px)
-            poles_y.append(py)
-
-        return poles_x, poles_y
-
-    @staticmethod
-    def linear_intersection(m1, m2, b1, b2):
-        x = (b2 - b1) / (m1 - m2)
-        y = m1 * x + b1
-        return x, y
 
     def hkl_intersection(self, px, py, m, b):
         dx = 0.001
@@ -376,21 +389,13 @@ class IPFColor:
                 print("Cannot find intersection of sst and linear curve. x: {}\ty: {}, returning x, y from p101".format(px, py))
                 return self.p101_x, self.p101_y
 
-    @staticmethod
-    def phi_dot_product(a, b):
-        a_norm = np.linalg.norm(a)
-        b_norm = np.linalg.norm(b)
-        ab = np.dot(a, b)
-        phi = np.arccos(ab / (a_norm * b_norm))
-        return phi
-
     def calc_phi(self, px, py, reference):
         v1_temp = reference
         x_temp = px - self.bary_x
         y_temp = py - self.bary_y
         v2_temp = np.array([x_temp, y_temp])
 
-        phi = self.phi_dot_product(v1_temp, v2_temp)
+        phi = Math.angle_between_vectors(v1_temp, v2_temp)
         if px > self.bary_x:
             phi = 2 * np.pi - phi
 
@@ -413,7 +418,7 @@ class IPFColor:
         dy_temp = py - self.bary_y
         d_partial = np.hypot(dx_temp, dy_temp)
 
-        # Normalization still a unclear, theta should be in range [0, pi/2]
+        # Normalization still unclear, theta should be in range [0, pi/2]
         # But matplotlib wants [0, 1]
         # theta = d_partial / d_full * (np.pi / 2)
         theta = d_partial / d_full
@@ -426,8 +431,8 @@ class IPFColor:
         :param px: x-coordinate of the point in the inverse pole-figure.
         :param py: y-coordinate of the point in the inverse pole-figure.
         """
-        m = IPFColor.calc_linear_m(self.bary_x, self.bary_y, px, py)
-        b = IPFColor.calc_linear_b(m, px, py)
+        m = Math.linear_slope(self.bary_x, self.bary_y, px, py)
+        b = Math.linear_y_intercept(m, px, py)
 
         angle = self.calc_phi(px, py, self.phi_reference)
         angle_round = round(angle, 2)
@@ -437,11 +442,11 @@ class IPFColor:
         eta_p111 = round(self.eta_p111, 2)
 
         if (angle_round >= eta_p001) and (angle_round <= eta_p101):
-            intersect_x, intersect_y = self.linear_intersection(m, self.m_001_101, b, self.b_001_101)
+            intersect_x, intersect_y = Math.linear_intersection(m, self.m_001_101, b, self.b_001_101)
         elif (angle_round > eta_p101) and (angle_round < eta_p111):
             intersect_x, intersect_y = self.hkl_intersection(px, py, m, b)
         else:
-            intersect_x, intersect_y = self.linear_intersection(m, self.m_001_111, b, self.b_001_111)
+            intersect_x, intersect_y = Math.linear_intersection(m, self.m_001_111, b, self.b_001_111)
 
         theta = self.calc_color_theta(px, py, intersect_x, intersect_y)
         phi = self.calc_color_phi(px, py)
@@ -476,7 +481,7 @@ class IPFColor:
         :param U: Orientation matrix.
         :param sample_direction: Sample direction.
         """
-        px, py = IPF.g_h_to_ipf_xy(U, sample_direction)
+        px, py = self.g_h_to_ipf_xy(U, sample_direction)
         rgb = self.rgb_from_pxy(px, py)
         return rgb
 
@@ -534,7 +539,7 @@ class IPFColor:
         return rgb
 
 
-class IPFPlots:
+class Plots:
     def __init__(self):
         self.image, self.x_max, self.y_max = self.get_colored_ipf_img()
 
@@ -542,23 +547,23 @@ class IPFPlots:
     def sst_xyz_equal_area():
         points = []
         for h in np.linspace(0.0, 1.0, 50):
-            reciprocal = IPF.reciprocal_vector(1, h, 1)
+            reciprocal = Crystallography.reciprocal_vector(1, h, 1)
             points.append(reciprocal)
         for h in np.linspace(1.0, 0.0, 50):
-            reciprocal = IPF.reciprocal_vector(h, h, 1)
+            reciprocal = Crystallography.reciprocal_vector(h, h, 1)
             points.append(reciprocal)
         for h in np.linspace(0.0, 1.0, 50):
-            reciprocal = IPF.reciprocal_vector(h, 0, 1)
+            reciprocal = Crystallography.reciprocal_vector(h, 0, 1)
             points.append(reciprocal)
 
         return np.array(points)
 
     @staticmethod
     def sst_xy_equal_angle():
-        points = IPFPlots.sst_xyz_equal_area()
+        points = Plots.sst_xyz_equal_area()
         pxs, pys = [], []
         for point in points:
-            px, py = IPF.project_cartesian_on_plane(*point)
+            px, py = Math.project_cartesian_on_plane(*point)
             pxs.append(px)
             pys.append(py)
 
@@ -567,7 +572,7 @@ class IPFPlots:
     @staticmethod
     def plot_points_in_sst(pxs, pys):
         plt.figure()
-        sst_xs, sst_ys = IPFPlots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
         plt.plot(sst_xs, sst_ys)
         plt.scatter(pxs, pys)
         plt.show()
@@ -585,12 +590,12 @@ class IPFPlots:
         image_transposed = np.zeros((len(cols), len(rows), 3))
         image_transposed += 1.0
 
-        ipfcolor = IPFColor()
+        ipf = IPF()
         for row_idx, row in enumerate(rows):
             for col_idx, col in enumerate(cols):
-                if ipfcolor.is_in_sst(col, row):
+                if ipf.is_in_sst(col, row):
                     try:
-                        h1l = ipfcolor.h1l_from_pxy(col, row)
+                        h1l = ipf.h1l_from_pxy(col, row)
                         rgb = matplotlib.colors.hsv_to_rgb(h1l)
                         rgb = np.round(rgb, 4)
                         image[-row_idx-1, col_idx, :] = rgb
@@ -607,7 +612,7 @@ class IPFPlots:
     def plot_colored_ipf(self, axis='off', path=None, showimage=False):
         plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
-        sst_xs, sst_ys = IPFPlots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
         plt.plot(sst_xs, sst_ys, c='black', lw=2)
 
         plt.axis(axis)
@@ -625,7 +630,7 @@ class IPFPlots:
     def plot_colored_ipf_raw(self, axis='on', path=None, showimage=False):
         plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
-        sst_xs, sst_ys = IPFPlots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
         plt.plot(sst_xs, sst_ys, c='black', lw=2)
 
         plt.axis(axis)
@@ -634,22 +639,3 @@ class IPFPlots:
             plt.savefig(path)
         if showimage:
             plt.show()
-
-
-if __name__ == "__main__":
-    h = np.array([0, 0, 1])
-    U = np.array([
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]
-    ])
-
-    # px, py = IPF.g_h_to_ipf_xy(U, h, filter_by_xy=True, filter_by_theta=False)
-    # px, py = IPF.g_h_to_ipf_xy(U, h, filter_by_xy=False, filter_by_theta=True)
-
-    # ipfcolor = IPFColor()
-    # rgb = ipfcolor.rgb_from_pxy(px, py)
-    # print(rgb)
-
-    plots = IPFPlots()
-    plots.plot_colored_ipf_raw(axis='off', showimage=True)
