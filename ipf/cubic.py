@@ -3,7 +3,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
-from tifffile.tifffile import imsave, imread
 
 
 class Symmetry:
@@ -110,55 +109,14 @@ class Symmetry:
 
         return Sym_crys
 
-    direction1 = np.array([1, 0, 0])
-    direction2 = np.array([0, 1, 0])
-    direction3 = np.array([0, 0, 1])
-    directions = [direction1, direction2, direction3]
 
-
-class IPFio:
-    @staticmethod
-    def read_in_U_matrix(filename):
-        with open(filename, 'r') as f:
-            lines = f.readlines()
-        row1 = lines[1].split()
-        row2 = lines[2].split()
-        row3 = lines[3].split()
-
-        U = [
-            [float(row1[0]), float(row1[1]), float(row1[2])],
-            [float(row2[0]), float(row2[1]), float(row2[2])],
-            [float(row3[0]), float(row3[1]), float(row3[2])],
-        ]
-
-        U = np.array(U, np.float32)
-
-        row11 = lines[11].split()
-        try:
-            euler = float(row11[0]), float(row11[1]), float(row11[2])
-        except:
-            euler = None
-
-        return U, euler
-
-    @staticmethod
-    def read_in_files(path):
-        """ Returns a dictionary, keys are filenames of the grains, values are the
-         corresponding U matrices """
-        grain_info_files = os.listdir(path)
-        U_matrices, eulers = {}, {}
-        for file in grain_info_files:
-            if int(file[1:3]) != 11:
-                continue
-            grain_info_file_path = os.path.join(path, file)
-            U, euler = IPFio.read_in_U_matrix(grain_info_file_path)
-            U_matrices[file] = U
-            eulers[file] = euler
-
-        return U_matrices, eulers
+class SST:
 
 
 class IPF:
+    def __init__(self):
+        self.ipfcolor = IPFColor()
+
     @staticmethod
     def reciprocal_vector(
             h, k, l,
@@ -166,6 +124,17 @@ class IPF:
             a2=np.array([0, 1, 0], dtype=np.float32),
             a3=np.array([0, 0, 1], dtype=np.float32),
     ):
+        """
+        Calculates the reciprocal vector for a given set of Miller indices and a primitive lattice.
+
+        :param h: Miller index
+        :param k: Miller index
+        :param l: Miller index
+        :param a1: Primitive lattice vector
+        :param a2: Primitive lattice vector
+        :param a3: Primitive lattice vector
+        :return: reciprocal vector
+        """
         norm = np.dot(a1, np.cross(a2, a3))
 
         b1 = np.cross(a2, a3) / norm
@@ -178,8 +147,18 @@ class IPF:
 
     @staticmethod
     def cartesian_to_spherical_angles(h_x, h_y, h_z):
+        """
+        Converts a cartesian vector to spherical angles.
+
+        :param h_x: x component of the vector
+        :param h_y: y component of the vector
+        :param h_z: z component of the vector
+        """
         if h_z < 0:
             h_z = -h_z
+
+        if np.round(h_z, 4) == 1.0:
+            h_z = 1.0
 
         theta = np.arccos(h_z)
         phi = np.arctan2(h_y, h_x)
@@ -187,112 +166,118 @@ class IPF:
 
     @staticmethod
     def project_spherical_on_plane(theta, phi):
+        """
+        Stereographic projection of spherical angles onto a plane at z = 0.
+
+        :param theta: Polar angle.
+        :param phi: Azimuthal angle.
+        """
         p_x = np.tan(theta / 2) * np.cos(phi)
         p_y = np.tan(theta / 2) * np.sin(phi)
         return p_x, p_y
 
     @staticmethod
     def project_cartesian_on_plane(hx, hy, hz):
+        """
+        Stereographic projection of a cartesian vector onto a plane at z = 0.
+
+        :param hx: x component of the vector.
+        :param hy: y component of the vector.
+        :param hz: z component of the vector.
+        """
         theta, phi = IPF.cartesian_to_spherical_angles(hx, hy, hz)
         px, py = IPF.project_spherical_on_plane(theta, phi)
         return px, py
 
-    @staticmethod
-    def filter_theta_phi(thetas, phis, epsilon):
-        mask_theta = np.logical_and((thetas < (np.pi / 4. + epsilon)), (thetas > (0. - epsilon)))
-        mask_phi = np.logical_and((phis < (np.pi / 4. + epsilon)), (phis > (0. - epsilon)))
-        mask = np.logical_and(mask_theta, mask_phi)
-        thetas_reduced = thetas[mask]
-        phis_reduced = phis[mask]
+    def filter_by_xy(self, p_xs, p_ys):
 
-        return thetas_reduced, phis_reduced
+        px_in_sst, py_in_sst = [], []
+        for p_x, p_y in zip(p_xs, p_ys):
+            if self.ipfcolor.is_in_sst(p_x, p_y):
+                px_in_sst.append(p_x)
+                py_in_sst.append(p_y)
+            else:
+                self.ipfcolor.is_in_sst(p_x, p_y)
 
-    @staticmethod
-    def filter_by_xy(p_xs, p_ys):
-        ipfcolor = IPFColor()
-        if len(p_xs) > 1:
-            # print("Warning: Grain has more than one contribution to the standard stereographical triangle! Looking for contribution in sst!")
-            px_in_sst, py_in_sst = [], []
-            for p_x, p_y in zip(p_xs, p_ys):
-                if ipfcolor.is_in_sst(p_x, p_y):
-                    px_in_sst.append(p_x)
-                    py_in_sst.append(p_y)
+        if len(px_in_sst) == 0:
+            raise Exception("Grain had multiple contributions before filtering and 0 afterwards. Cant be!")
 
-            if len(px_in_sst) == 0:
-                print("Grain had multiple contributions before filtering and 0 afterwards. Cant be!")
-                return [None], [None]
+        if len(px_in_sst) == 1:
+            return [px_in_sst[0]], [py_in_sst[0]]
 
-            if len(px_in_sst) == 1:
-                # print("Multiple contributions could be filtered to 1")
+        if len(px_in_sst) > 1:
+            px_in_sst_round = np.round(px_in_sst, 3)
+            py_in_sst_round = np.round(py_in_sst, 3)
+            if len(np.unique(px_in_sst_round)) == 1 and len(np.unique(py_in_sst_round)) == 1:
                 return [px_in_sst[0]], [py_in_sst[0]]
-
-            if len(px_in_sst) > 1:
-                print("Grain has multiple contributions to sst, not logical!, returning first contribution")
-                return [px_in_sst[0]], [py_in_sst[0]]
-
-        elif len(p_xs) == 0:
-            return [None], [None]
-
-        elif len(p_xs) == 1:
-            return [p_xs[0]], [p_ys[0]]
+            else:
+                raise Exception("Grain has multiple contributions to sst")
 
     @staticmethod
     def hkl_to_ipf_xy(h, k, l):
+        """
+        Converts a set of Miller indices to the corresponding stereographic projection coordinates.
+
+        :param h: Miller index
+        :param k: Miller index
+        :param l: Miller index
+        """
         plane_normal = IPF.reciprocal_vector(h, k, l)
         theta, phi = IPF.cartesian_to_spherical_angles(*plane_normal)
         px, py = IPF.project_spherical_on_plane(theta, phi)
         return px, py
 
-    @staticmethod
-    def g_h_to_ipf_xy(g, h, filter_by_theta=True, filter_by_xy=False):
+    def g_h_to_ipf_xy(self, g, h):
         transformed_direction = np.dot(g, h)
 
+        return self.unit_vector_to_ipf_xy(transformed_direction)
+
+    def unit_vector_to_ipf_xy(self, v):
+        """
+        Determines the inverse pole-figure position for a given orientation matrix g and sample direction h.
+
+        :param g: Orientation matrix
+        :param h: Sample direction
+        """
+
+        if np.round(np.linalg.norm(v), 3) != 1.0:
+            raise Exception("Vector is not a unit vector")
+
         # Apply symmetry
-        n_sym = 24
         symmetry_matrices = Symmetry.CubicSym()
 
-        symmetrized = np.zeros((n_sym, 3))
+        n_sym = symmetry_matrices.shape[2]
+        vs_applied_symmetries = np.zeros([n_sym, 3])
+        thetas = np.zeros(n_sym)
+        phis = np.zeros(n_sym)
+
         for sym_idx in range(n_sym):
             sym_matrix = symmetry_matrices[:, :, sym_idx]
 
-            sym_direction = np.dot(sym_matrix, transformed_direction)
+            v_applied_symmetry = np.dot(sym_matrix, v)
 
             # If z is lower negative, project to upper hemisphere
-            if sym_direction[2] < 0.:
-                sym_direction = -sym_direction
+            if v_applied_symmetry[2] < 0.:
+                v_applied_symmetry[2] *= -1
 
-            symmetrized[sym_idx, :] = sym_direction
+            vs_applied_symmetries[sym_idx] = v_applied_symmetry
 
-        thetas, phis = np.zeros(n_sym), np.zeros(n_sym)
-        for idx, vector in enumerate(symmetrized):
-            theta, phi = IPF.cartesian_to_spherical_angles(*vector)
-            thetas[idx] = theta
-            phis[idx] = phi
+            theta, phi = IPF.cartesian_to_spherical_angles(*v_applied_symmetry)
+            thetas[sym_idx] = theta
+            phis[sym_idx] = phi
 
-        thetas_reduced = thetas
-        phis_reduced = phis
-        if filter_by_theta:
-            # Now filter out theta and phi > 45 degrees || > (pi / 4)
-            # epsilon = (2 * np.pi / 3600.)
-            epsilon = 0.
-            thetas_reduced, phis_reduced = IPF.filter_theta_phi(thetas, phis, epsilon)
-            if len(thetas_reduced) == 0:
-                epsilon = (2 * np.pi / 120.)
-                thetas_reduced, phis_reduced = IPF.filter_theta_phi(thetas, phis, epsilon)
+        pxs, pys = self.project_spherical_on_plane(thetas, phis)
 
-        # p_xs, p_ys = self.project_spherical_on_plane(thetas_reduced, phis_reduced)
-        p_xs, p_ys = IPF.project_spherical_on_plane(thetas_reduced, phis_reduced)
+        sst_xs, sst_ys = self.filter_by_xy(pxs, pys)
 
-        if filter_by_xy:
-            p_xs, p_ys = IPF.filter_by_xy(p_xs, p_ys)
-            if np.nan in p_xs:
-                a = 5
-                print("Breakpoint")
+        if len(sst_xs) == 0:
+            raise Exception("No valid IPF coordinates found.")
 
-        if len(p_xs) > 0:
-            return p_xs[0], p_ys[0]
+        elif len(sst_xs) == 1:
+            return sst_xs[0], sst_ys[0]
+
         else:
-            return None, None
+            raise Exception("More than one contribution")
 
 
 class IPFColor:
@@ -313,7 +298,7 @@ class IPFColor:
 
         curve_xs = []
         curve_ys = []
-        hs = np.linspace(1.0, 0.0, 1000)
+        hs = np.linspace(1.0, 0.0, 3000)
         for h in hs:
             sample_normal = IPF.reciprocal_vector(1, h, 1)
             px, py = IPF.project_cartesian_on_plane(*sample_normal)
@@ -324,16 +309,16 @@ class IPFColor:
         self.curve_xs = np.array(curve_xs)
         self.curve_ys = np.array(curve_ys)
 
-        # For new intersection approach
         self.m_001_101 = self.calc_linear_m(self.p001_x, self.p001_y, self.p101_x, self.p101_y)
         self.b_001_101 = self.calc_linear_b(self.m_001_101, self.p101_x, self.p101_y)
-
-        phi = np.array([0, 1])
-        self.phi_reference = phi / np.linalg.norm(phi)
 
         self.eta_p001 = self.calc_phi(self.p001_x, self.p001_y, np.array(([0, 1])))
         self.eta_p101 = self.calc_phi(self.p101_x, self.p101_y, np.array(([0, 1])))
         self.eta_p111 = self.calc_phi(self.p111_x, self.p111_y, np.array(([0, 1])))
+
+        phi = np.array([0, 1])
+        self.phi_reference = phi / np.linalg.norm(phi)
+
 
     @staticmethod
     def calc_barycenter(hkls):
@@ -344,8 +329,8 @@ class IPFColor:
             x_temp.append(x)
             y_temp.append(y)
 
-        bary_center_x = sum(x_temp) / 3
-        bary_center_y = sum(y_temp) / 3
+        bary_center_x = sum(x_temp) / len(x_temp)
+        bary_center_y = sum(y_temp) / len(y_temp)
         return bary_center_x, bary_center_y
 
     @staticmethod
@@ -435,15 +420,22 @@ class IPFColor:
         return theta
 
     def h1l_from_pxy(self, px, py):
-        """" Returns theta, phi, where theta describes hue and phi the lightning. """
+        """"
+        Calculates the hue and lightning for a given position in the inverse pole-figure.
+
+        :param px: x-coordinate of the point in the inverse pole-figure.
+        :param py: y-coordinate of the point in the inverse pole-figure.
+        """
         m = IPFColor.calc_linear_m(self.bary_x, self.bary_y, px, py)
         b = IPFColor.calc_linear_b(m, px, py)
 
         angle = self.calc_phi(px, py, self.phi_reference)
         angle_round = round(angle, 2)
+
         eta_p001 = round(self.eta_p001, 2)
         eta_p101 = round(self.eta_p101, 2)
         eta_p111 = round(self.eta_p111, 2)
+
         if (angle_round >= eta_p001) and (angle_round <= eta_p101):
             intersect_x, intersect_y = self.linear_intersection(m, self.m_001_101, b, self.b_001_101)
         elif (angle_round > eta_p101) and (angle_round < eta_p111):
@@ -456,6 +448,13 @@ class IPFColor:
         return phi, 1., theta
 
     def rgb_from_pxy(self, px, py, check_value_space=True):
+        """
+        Calculates the RGB color for a given position in the inverse pole-figure.
+
+        :param px: x-coordinate of the point in the inverse pole-figure.
+        :param py: y-coordinate of the point in the inverse pole-figure.
+        :param check_value_space: If True, the RGB values are checked to be in the range [0, 1].
+        """
         h1l = self.h1l_from_pxy(px, py)
 
         rgb = matplotlib.colors.hsv_to_rgb(h1l)
@@ -470,28 +469,45 @@ class IPFColor:
 
         return rgb
 
-    def rgb_from_U(self, U, sample_direction, filter_by_xy=True, filter_by_theta=False):
-        px, py = IPF.g_h_to_ipf_xy(U, sample_direction, filter_by_xy=filter_by_xy, filter_by_theta=filter_by_theta)
+    def rgb_from_U(self, U, sample_direction):
+        """
+        Calculates the inverse pole-figure RGB color for a given orientation and sample direction.
+
+        :param U: Orientation matrix.
+        :param sample_direction: Sample direction.
+        """
+        px, py = IPF.g_h_to_ipf_xy(U, sample_direction)
         rgb = self.rgb_from_pxy(px, py)
         return rgb
 
     def is_in_sst(self, x, y):
+        """
+        Checks if a given point is inside the standard stereographic triangle.
+
+        :param x: x-coordinate of the point.
+        :param y: y-coordinate of the point.
+        """
         y_min = self.p001_y
-        if (x > self.p001_x) and (x <= self.p111_x):
+        if (x >= self.p001_x) and (x <= self.p111_x):
             y_max = self.m_001_111 * x + self.b_001_111
-        elif (x > self.p111_x) and (x < self.p101_x):
+        elif (x >= self.p111_x) and (x <= self.p101_x):
             x_idx = np.argmin(np.abs(self.curve_xs - x))
             y_max = self.curve_ys[x_idx]
         else:
             return False
 
-        if (y <= y_max) and (y >= y_min):
+        if (y >= y_min) and (y <= y_max):
             return True
         else:
             return False
 
     @staticmethod
     def hsl_to_rgb(hsl):
+        """
+        Converts a color from HSL to RGB.
+
+        :param hsl: (hue, saturation, lightning).
+        """
         h, s, l = hsl[0], hsl[1], hsl[2]
         c = (1 - np.abs(2 * l - 1)) * s
         x = c * (1 - np.abs(h / 60))
