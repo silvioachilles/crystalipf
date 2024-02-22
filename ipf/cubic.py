@@ -4,106 +4,108 @@ import matplotlib.colors
 
 
 def symmetry_operations():
-    # Applying 24 Crystal Symmetry elements O[432] to the orientation matrix
-    Sym_crys = np.zeros((24, 3, 3))
+    """
+    Returns the 24 symmetry operations for cubic crystals.
+    """
+    sym_crys = np.zeros((24, 3, 3))
     # 1
-    Sym_crys[0, 0, 0] = 1
-    Sym_crys[0, 1, 1] = 1
-    Sym_crys[0, 2, 2] = 1
+    sym_crys[0, 0, 0] = 1
+    sym_crys[0, 1, 1] = 1
+    sym_crys[0, 2, 2] = 1
     # 2
-    Sym_crys[2, 0, 0] = 1
-    Sym_crys[2, 1, 1] = -1
-    Sym_crys[2, 2, 2] = -1
+    sym_crys[2, 0, 0] = 1
+    sym_crys[2, 1, 1] = -1
+    sym_crys[2, 2, 2] = -1
     # 3
-    Sym_crys[6, 0, 0] = -1
-    Sym_crys[6, 1, 1] = 1
-    Sym_crys[6, 2, 2] = -1
+    sym_crys[6, 0, 0] = -1
+    sym_crys[6, 1, 1] = 1
+    sym_crys[6, 2, 2] = -1
     # 4
-    Sym_crys[7, 0, 0] = -1
-    Sym_crys[7, 1, 1] = -1
-    Sym_crys[7, 2, 2] = 1
+    sym_crys[7, 0, 0] = -1
+    sym_crys[7, 1, 1] = -1
+    sym_crys[7, 2, 2] = 1
     # 5
-    Sym_crys[1, 0, 0] = 1
-    Sym_crys[1, 1, 2] = -1
-    Sym_crys[1, 2, 1] = 1
+    sym_crys[1, 0, 0] = 1
+    sym_crys[1, 1, 2] = -1
+    sym_crys[1, 2, 1] = 1
     # 6
-    Sym_crys[9, 0, 1] = -1
-    Sym_crys[9, 1, 0] = 1
-    Sym_crys[9, 2, 2] = 1
+    sym_crys[9, 0, 1] = -1
+    sym_crys[9, 1, 0] = 1
+    sym_crys[9, 2, 2] = 1
     # 7
-    Sym_crys[4, 0, 2] = -1
-    Sym_crys[4, 1, 1] = 1
-    Sym_crys[4, 2, 0] = 1
+    sym_crys[4, 0, 2] = -1
+    sym_crys[4, 1, 1] = 1
+    sym_crys[4, 2, 0] = 1
     # 8
-    Sym_crys[17, 0, 2] = 1
-    Sym_crys[17, 1, 0] = 1
-    Sym_crys[17, 2, 1] = 1
+    sym_crys[17, 0, 2] = 1
+    sym_crys[17, 1, 0] = 1
+    sym_crys[17, 2, 1] = 1
     # 9
-    Sym_crys[16, 0, 1] = 1
-    Sym_crys[16, 1, 2] = 1
-    Sym_crys[16, 2, 0] = 1
+    sym_crys[16, 0, 1] = 1
+    sym_crys[16, 1, 2] = 1
+    sym_crys[16, 2, 0] = 1
     # 10
-    Sym_crys[20, 0, 2] = 1
-    Sym_crys[20, 1, 1] = -1
-    Sym_crys[20, 2, 0] = 1
+    sym_crys[20, 0, 2] = 1
+    sym_crys[20, 1, 1] = -1
+    sym_crys[20, 2, 0] = 1
     # 11
-    Sym_crys[3, 0, 0] = 1
-    Sym_crys[3, 1, 2] = 1
-    Sym_crys[3, 2, 1] = -1
+    sym_crys[3, 0, 0] = 1
+    sym_crys[3, 1, 2] = 1
+    sym_crys[3, 2, 1] = -1
     # 12
-    Sym_crys[5, 0, 2] = 1
-    Sym_crys[5, 1, 1] = 1
-    Sym_crys[5, 2, 0] = -1
+    sym_crys[5, 0, 2] = 1
+    sym_crys[5, 1, 1] = 1
+    sym_crys[5, 2, 0] = -1
     # 13
-    Sym_crys[8, 0, 1] = 1
-    Sym_crys[8, 1, 0] = -1
-    Sym_crys[8, 2, 2] = 1
+    sym_crys[8, 0, 1] = 1
+    sym_crys[8, 1, 0] = -1
+    sym_crys[8, 2, 2] = 1
     # 14
-    Sym_crys[23, 0, 1] = -1
-    Sym_crys[23, 1, 0] = -1
-    Sym_crys[23, 2, 2] = -1
+    sym_crys[23, 0, 1] = -1
+    sym_crys[23, 1, 0] = -1
+    sym_crys[23, 2, 2] = -1
     # 15
-    Sym_crys[21, 0, 0] = -1
-    Sym_crys[21, 1, 2] = -1
-    Sym_crys[21, 2, 1] = -1
+    sym_crys[21, 0, 0] = -1
+    sym_crys[21, 1, 2] = -1
+    sym_crys[21, 2, 1] = -1
     # 16
-    Sym_crys[22, 0, 2] = -1
-    Sym_crys[22, 1, 1] = -1
-    Sym_crys[22, 2, 0] = -1
+    sym_crys[22, 0, 2] = -1
+    sym_crys[22, 1, 1] = -1
+    sym_crys[22, 2, 0] = -1
     # 17
-    Sym_crys[18, 0, 1] = 1
-    Sym_crys[18, 1, 0] = 1
-    Sym_crys[18, 2, 2] = -1
+    sym_crys[18, 0, 1] = 1
+    sym_crys[18, 1, 0] = 1
+    sym_crys[18, 2, 2] = -1
     # 18
-    Sym_crys[14, 0, 1] = 1
-    Sym_crys[14, 1, 2] = -1
-    Sym_crys[14, 2, 0] = -1
+    sym_crys[14, 0, 1] = 1
+    sym_crys[14, 1, 2] = -1
+    sym_crys[14, 2, 0] = -1
     # 19
-    Sym_crys[12, 0, 1] = -1
-    Sym_crys[12, 1, 2] = -1
-    Sym_crys[12, 2, 0] = 1
+    sym_crys[12, 0, 1] = -1
+    sym_crys[12, 1, 2] = -1
+    sym_crys[12, 2, 0] = 1
     # 20
-    Sym_crys[10, 0, 1] = -1
-    Sym_crys[10, 1, 2] = 1
-    Sym_crys[10, 2, 0] = -1
+    sym_crys[10, 0, 1] = -1
+    sym_crys[10, 1, 2] = 1
+    sym_crys[10, 2, 0] = -1
     # 21
-    Sym_crys[13, 0, 2] = -1
-    Sym_crys[13, 1, 0] = 1
-    Sym_crys[13, 2, 1] = -1
+    sym_crys[13, 0, 2] = -1
+    sym_crys[13, 1, 0] = 1
+    sym_crys[13, 2, 1] = -1
     # 22
-    Sym_crys[15, 0, 2] = -1
-    Sym_crys[15, 1, 0] = -1
-    Sym_crys[15, 2, 1] = 1
+    sym_crys[15, 0, 2] = -1
+    sym_crys[15, 1, 0] = -1
+    sym_crys[15, 2, 1] = 1
     # 23
-    Sym_crys[11, 0, 2] = 1
-    Sym_crys[11, 1, 0] = -1
-    Sym_crys[11, 2, 1] = -1
+    sym_crys[11, 0, 2] = 1
+    sym_crys[11, 1, 0] = -1
+    sym_crys[11, 2, 1] = -1
     # 24
-    Sym_crys[19, 0, 0] = -1
-    Sym_crys[19, 1, 2] = 1
-    Sym_crys[19, 2, 1] = 1
+    sym_crys[19, 0, 0] = -1
+    sym_crys[19, 1, 2] = 1
+    sym_crys[19, 2, 1] = 1
 
-    return Sym_crys
+    return sym_crys
 
 
 class Math:
@@ -128,6 +130,11 @@ class Math:
         :param hy: y component of the vector.
         :param hz: z component of the vector.
         """
+        # The mirror symmetry of the cubic space group to the (x, y) plane needs to
+        # be applied here. I.e. negative z values need to be flipped to positive.
+        if hz < 0:
+            hz = -hz
+
         theta, phi = Math.cartesian_to_spherical(hx, hy, hz)
         px, py = Math.project_spherical_on_plane(theta, phi)
         return px, py
@@ -141,9 +148,8 @@ class Math:
         :param h_y: y component of the vector
         :param h_z: z component of the vector
         """
-        if h_z < 0:
-            h_z = -h_z
-
+        # python / numpy may represent 1.0 as 1.000000000002 and arccos(1.000000000002) = nan
+        # so we round it to 1.0 to ensure the arccos function works properly.
         if np.round(h_z, 4) == 1.0:
             h_z = 1.0
 
@@ -204,11 +210,11 @@ class Math:
 
         :return: Angle between the two vectors.
         """
-        a_norm = np.linalg.norm(v1)
+        v1_norm = np.linalg.norm(v1)
         v2_norm = np.linalg.norm(v2)
         v1v2 = np.dot(v1, v2)
-        phi = np.arccos(v1v2 / (a_norm * v2_norm))
-        return phi
+        angle = np.arccos(v1v2 / (v1_norm * v2_norm))
+        return angle
 
 
 class Crystallography:
@@ -220,7 +226,8 @@ class Crystallography:
             a3=np.array([0, 0, 1], dtype=np.float32),
     ):
         """
-        Calculates the reciprocal vector for a given set of Miller indices and a primitive lattice.
+        Calculates the reciprocal vector for a given set of Miller indices
+        and a primitive lattice.
 
         :param h: Miller index
         :param k: Miller index
@@ -328,6 +335,12 @@ class IPF:
         :return: (x, y) coordinate in the inverse pole-figure
         """
         plane_normal = Crystallography.reciprocal_vector(h, k, l)
+
+        # The mirror symmetry of the cubic space group to the (x, y) plane needs to
+        # be applied here. I.e. negative z values need to be flipped to positive.
+        if plane_normal[2] < 0:
+            plane_normal[2] = -plane_normal[2]
+
         theta, phi = Math.cartesian_to_spherical(*plane_normal)
         px, py = Math.project_spherical_on_plane(theta, phi)
         return px, py
@@ -367,7 +380,8 @@ class IPF:
         for sym_idx, sym_op in enumerate(self.symmetry_operations):
             v_applied_symmetry = np.dot(sym_op, v)
 
-            # if z is negative, project to upper hemisphere
+            # The mirror symmetry of the cubic space group to the (x, y) plane needs to
+            # be applied here. I.e. negative z values need to be flipped to positive.
             if v_applied_symmetry[2] < 0.:
                 v_applied_symmetry[2] *= -1
 
@@ -577,26 +591,28 @@ class Plots:
         self.image, self.x_max, self.y_max = self.get_colored_ipf_img()
 
     @staticmethod
-    def sst_xyz_equal_area():
-        points = []
+    def sst_axes():
+        """
+        Returns the x and y coordinates of the axes of the standard stereographic triangle.
+
+        :return: x and y coordinates of the axes of the standard stereographic triangle.
+        """
+        pxs, pys = [], []
         for h in np.linspace(0.0, 1.0, 50):
             reciprocal = Crystallography.reciprocal_vector(1, h, 1)
-            points.append(reciprocal)
-        for h in np.linspace(1.0, 0.0, 50):
-            reciprocal = Crystallography.reciprocal_vector(h, h, 1)
-            points.append(reciprocal)
+            px, py = Math.project_cartesian_on_plane(*reciprocal)
+            pxs.append(px)
+            pys.append(py)
+
+        for hk in np.linspace(1.0, 0.0, 50):
+            reciprocal = Crystallography.reciprocal_vector(hk, hk, 1)
+            px, py = Math.project_cartesian_on_plane(*reciprocal)
+            pxs.append(px)
+            pys.append(py)
+
         for h in np.linspace(0.0, 1.0, 50):
             reciprocal = Crystallography.reciprocal_vector(h, 0, 1)
-            points.append(reciprocal)
-
-        return np.array(points)
-
-    @staticmethod
-    def sst_xy_equal_angle():
-        points = Plots.sst_xyz_equal_area()
-        pxs, pys = [], []
-        for point in points:
-            px, py = Math.project_cartesian_on_plane(*point)
+            px, py = Math.project_cartesian_on_plane(*reciprocal)
             pxs.append(px)
             pys.append(py)
 
@@ -605,7 +621,7 @@ class Plots:
     @staticmethod
     def plot_points_in_sst(pxs, pys):
         plt.figure()
-        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_axes()
         plt.plot(sst_xs, sst_ys)
         plt.scatter(pxs, pys)
         plt.show()
@@ -638,14 +654,12 @@ class Plots:
 
                     image_transposed[-col_idx, row_idx, :] = image[row_idx, col_idx, :]
 
-        # print("IPF color done. Warnings should end here.")
-        # return image_transposed, x_max, y_max
         return image, x_max, y_max
 
     def plot_colored_ipf(self, axis='off', path=None, showimage=False):
         plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
-        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_axes()
         plt.plot(sst_xs, sst_ys, c='black', lw=2)
 
         plt.axis(axis)
@@ -660,10 +674,10 @@ class Plots:
         if showimage:
             plt.show()
 
-    def plot_colored_ipf_raw(self, axis='on', path=None, showimage=False):
+    def plot_colored_ipf_raw(self, axis='off', path=None, showimage=False):
         plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
-        sst_xs, sst_ys = Plots.sst_xy_equal_angle()
+        sst_xs, sst_ys = Plots.sst_axes()
         plt.plot(sst_xs, sst_ys, c='black', lw=2)
 
         plt.axis(axis)
