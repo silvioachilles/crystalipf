@@ -1,1 +1,1 @@
-from . import cubic
+from ipf import cubic
