@@ -145,17 +145,6 @@ class Crystallography:
 
 
 class IPF:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        """
-        Singleton pattern for the IPF class.
-        """
-        if not cls._instance:
-            cls._instance = super(IPF, cls).__new__(
-                cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
         self.hkls = (
             (0, 0, 1),
@@ -210,23 +199,8 @@ class IPF:
             if self.is_in_sst(p_x, p_y):
                 px_in_sst.append(p_x)
                 py_in_sst.append(p_y)
-            else:
-                self.is_in_sst(p_x, p_y)
 
-        if len(px_in_sst) == 0:
-            raise Exception("Grain had multiple contributions before "
-                            "filtering and 0 afterwards. Cant be!")
-
-        if len(px_in_sst) == 1:
-            return [px_in_sst[0]], [py_in_sst[0]]
-
-        if len(px_in_sst) > 1:
-            px_in_sst_round = np.round(px_in_sst, 3)
-            py_in_sst_round = np.round(py_in_sst, 3)
-            if len(np.unique(px_in_sst_round)) == 1 and len(np.unique(py_in_sst_round)) == 1:
-                return [px_in_sst[0]], [py_in_sst[0]]
-            else:
-                raise Exception("Grain has multiple contributions to sst")
+        return px_in_sst, py_in_sst
 
     @staticmethod
     def hkl_to_ipf_xy(h, k, l):
@@ -299,16 +273,23 @@ class IPF:
 
         pxs, pys = Math.project_spherical_on_plane(thetas, phis)
 
-        sst_xs, sst_ys = self.filter_by_xy(pxs, pys)
+        px_in_sst, py_in_sst = self.filter_by_xy(pxs, pys)
 
-        if len(sst_xs) == 0:
-            raise Exception("No valid IPF coordinates found.")
+        if len(px_in_sst) == 0:
+            raise Exception("Grain's orientation has no contribution in the ipf."
+                            "Cant be!")
 
-        elif len(sst_xs) == 1:
-            return sst_xs[0], sst_ys[0]
+        if len(px_in_sst) == 1:
+            return px_in_sst[0], py_in_sst[0]
 
-        else:
-            raise Exception("More than one contribution")
+        if len(px_in_sst) > 1:
+            px_in_sst_round = np.round(px_in_sst, 3)
+            py_in_sst_round = np.round(py_in_sst, 3)
+            if len(np.unique(px_in_sst_round)) == 1 and len(np.unique(py_in_sst_round)) == 1:
+                return px_in_sst[0], py_in_sst[0]
+            else:
+                raise Exception("Grain has multiple contributions to ipf. "
+                                "Can't be!")
 
     def hkl_intersection(self, px, py, m, b):
         """
@@ -523,17 +504,6 @@ class Plots:
             pys.append(py)
 
         return pxs, pys
-
-    @staticmethod
-    def plot_points_in_sst(pxs, pys):
-        """
-        Plots the given points in the standard stereographic triangle.
-        """
-        plt.figure()
-        sst_xs, sst_ys = Plots.sst_axes()
-        plt.plot(sst_xs, sst_ys)
-        plt.scatter(pxs, pys)
-        plt.show()
 
     @staticmethod
     def get_colored_ipf_img():
