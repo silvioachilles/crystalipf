@@ -283,6 +283,15 @@ class IPF:
         self.symmetry_operations = symmetry_operations()
 
     def filter_by_xy(self, p_xs, p_ys):
+        """
+        Filters a given set of points to only include those that
+        are inside the standard stereographic triangle.
+
+        :param p_xs: x-coordinates of the points.
+        :param p_ys: y-coordinates of the points.
+
+        :return: x, y coordinates of the points inside the standard stereographic triangle.
+        """
         px_in_sst, py_in_sst = [], []
         for p_x, p_y in zip(p_xs, p_ys):
             if self.is_in_sst(p_x, p_y):
@@ -292,7 +301,8 @@ class IPF:
                 self.is_in_sst(p_x, p_y)
 
         if len(px_in_sst) == 0:
-            raise Exception("Grain had multiple contributions before filtering and 0 afterwards. Cant be!")
+            raise Exception("Grain had multiple contributions before "
+                            "filtering and 0 afterwards. Cant be!")
 
         if len(px_in_sst) == 1:
             return [px_in_sst[0]], [py_in_sst[0]]
@@ -308,11 +318,14 @@ class IPF:
     @staticmethod
     def hkl_to_ipf_xy(h, k, l):
         """
-        Converts a set of Miller indices to the corresponding stereographic projection coordinates.
+        Converts a set of Miller indices to the corresponding
+        stereographic projection coordinates.
 
         :param h: Miller index
         :param k: Miller index
         :param l: Miller index
+
+        :return: (x, y) coordinate in the inverse pole-figure
         """
         plane_normal = Crystallography.reciprocal_vector(h, k, l)
         theta, phi = Math.cartesian_to_spherical(*plane_normal)
@@ -320,17 +333,26 @@ class IPF:
         return px, py
 
     def g_h_to_ipf_xy(self, g, h):
-        transformed_direction = np.dot(g, h)
-
-        return self.unit_vector_to_ipf_xy(transformed_direction)
-
-    def unit_vector_to_ipf_xy(self, v):
         """
         Determines the inverse pole-figure position for a given orientation matrix g
         and sample direction h.
 
         :param g: Orientation matrix
         :param h: Sample direction
+
+        :return: (x, y) coordinate in the inverse pole-figure
+        """
+        transformed_direction = np.dot(g, h)
+
+        return self.unit_vector_to_ipf_xy(transformed_direction)
+
+    def unit_vector_to_ipf_xy(self, v):
+        """
+        Determines the inverse pole-figure position for a real space vector v.
+
+        :param v: The real space vector
+
+        :return: (x, y) coordinate in the inverse pole-figure
         """
 
         if np.round(np.linalg.norm(v), 3) != 1.0:
@@ -369,6 +391,17 @@ class IPF:
             raise Exception("More than one contribution")
 
     def hkl_intersection(self, px, py, m, b):
+        """
+        Finds the intersection of a linear function defined as a point and slope,
+        with the [101] - [111] edge of the ipf.
+
+        :param px: x-coordinate of the point
+        :param py: y-coordinate of the point
+        :param m: slope of the linear function
+        :param b: y-intercept of the linear function
+
+        :return: x, y coordinates of the intersection
+        """
         dx = 0.001
         x_temp = px
         y_temp = py
@@ -390,6 +423,15 @@ class IPF:
                 return self.p101_x, self.p101_y
 
     def bary_azimuthal(self, px, py):
+        """
+        Calculates the azimuthal angle of a given position around the bary
+        center of the inverse pole-figure.
+
+        :param px: x-coordinate of the point in the inverse pole-figure.
+        :param py: y-coordinate of the point in the inverse pole-figure.
+
+        :return: Azimuthal angle
+        """
         v1_temp = np.array([0, 1])
 
         x_temp = px - self.bary_x
@@ -404,6 +446,14 @@ class IPF:
         return azimuthal
 
     def hsl_hue(self, px, py):
+        """
+        Calculates the hsl hue for a given position in the inverse pole-figure.
+
+        :param px: x-coordinate of the point in the inverse pole-figure.
+        :param py: y-coordinate of the point in the inverse pole-figure.
+
+        :return: Hue value
+        """
         hue = self.bary_azimuthal(px, py)
 
         if hue > (2 * np.pi):
@@ -413,27 +463,14 @@ class IPF:
 
         return hue
 
-    def hsl_lightness(self, px, py, intersect_x, intersect_y):
-        dx_temp = intersect_x - self.bary_x
-        dy_temp = intersect_y - self.bary_y
-        d_full = np.hypot(dx_temp, dy_temp)
-
-        dx_temp = px - self.bary_x
-        dy_temp = py - self.bary_y
-        d_partial = np.hypot(dx_temp, dy_temp)
-
-        # Normalization still unclear, lightness should be in range [0, pi/2]
-        # But matplotlib wants [0, 1]
-        # lightness = d_partial / d_full * (np.pi / 2)
-        lightness = d_partial / d_full
-        return lightness
-
-    def h1l_from_pxy(self, px, py):
-        """"
-        Calculates the hue and lightning for a given position in the inverse pole-figure.
+    def hsl_lightness(self, px, py):
+        """
+        Calculates the hsl lightness for a given position in the inverse pole-figure.
 
         :param px: x-coordinate of the point in the inverse pole-figure.
         :param py: y-coordinate of the point in the inverse pole-figure.
+
+        :return: Lightness value
         """
         m = Math.linear_slope(self.bary_x, self.bary_y, px, py)
         b = Math.linear_y_intercept(m, px, py)
@@ -447,13 +484,35 @@ class IPF:
 
         if (angle_round >= eta_p001) and (angle_round <= eta_p101):
             intersect_x, intersect_y = Math.linear_intersection(m, self.m_001_101, b, self.b_001_101)
+
         elif (angle_round > eta_p101) and (angle_round < eta_p111):
             intersect_x, intersect_y = self.hkl_intersection(px, py, m, b)
+
         else:
             intersect_x, intersect_y = Math.linear_intersection(m, self.m_001_111, b, self.b_001_111)
 
+        dx_temp = intersect_x - self.bary_x
+        dy_temp = intersect_y - self.bary_y
+        d_full = np.hypot(dx_temp, dy_temp)
+
+        dx_temp = px - self.bary_x
+        dy_temp = py - self.bary_y
+        d_partial = np.hypot(dx_temp, dy_temp)
+
+        lightness = d_partial / d_full
+        return lightness
+
+    def h1l_from_pxy(self, px, py):
+        """"
+        Calculates the hue and lightning for a given position in the inverse pole-figure.
+
+        :param px: x-coordinate of the point in the inverse pole-figure.
+        :param py: y-coordinate of the point in the inverse pole-figure.
+        """
+
         hue = self.hsl_hue(px, py)
-        lightness = self.hsl_lightness(px, py, intersect_x, intersect_y)
+        lightness = self.hsl_lightness(px, py)
+
         return hue, 1., lightness
 
     def rgb_from_pxy(self, px, py, check_value_space=True):
@@ -499,9 +558,11 @@ class IPF:
         y_min = self.p001_y
         if (x >= self.p001_x) and (x <= self.p111_x):
             y_max = self.m_001_111 * x + self.b_001_111
+
         elif (x >= self.p111_x) and (x <= self.p101_x):
             x_idx = np.argmin(np.abs(self.curve_xs - x))
             y_max = self.curve_ys[x_idx]
+
         else:
             return False
 
