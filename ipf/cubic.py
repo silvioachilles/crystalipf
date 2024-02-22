@@ -570,7 +570,7 @@ class Plots:
 
         return image, x_max, y_max
 
-    def plot_colored_ipf(self, axis='off', corners=True, path=None, showimage=False):
+    def plot_colored_ipf(self, ax=None, axis='off', corners=True, path=None, showimage=False):
         """
         Plots the colored inverse pole-figure.
 
@@ -581,7 +581,9 @@ class Plots:
 
         :return: Matplotlib axes object of the colored inverse pole-figure.
         """
-        fig, ax = plt.subplots()
+        if ax is None:
+            fig, ax = plt.subplots()
+
         ax.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
         sst_xs, sst_ys = Plots.sst_axes()
@@ -722,10 +724,11 @@ def image():
     if __plots__ is None:
         __plots__ = Plots()
 
-    return __plots__.image
+    return __plots__.image, __plots__.x_max, __plots__.y_max
 
 
 def image_plt(
+        ax=None,
         axis='off',
         corners=True,
         path=None,
@@ -740,6 +743,7 @@ def image_plt(
         __plots__ = Plots()
 
     return __plots__.plot_colored_ipf(
+        ax,
         axis,
         corners,
         path,
@@ -797,8 +801,4 @@ def edges():
 
     :return: (xs, ys) coordinates of the points spanning the edges of the inverse pole-figure.
     """
-    global __plots__
-    if __plots__ is None:
-        __plots__ = Plots()
-
-    return __plots__.sst_axes()
+    return Plots.sst_axes()
