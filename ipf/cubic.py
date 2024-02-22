@@ -5,54 +5,6 @@ import matplotlib.colors
 
 class Math:
     @staticmethod
-    def project_spherical_on_plane(theta, phi):
-        """
-        Stereographic projection of spherical coordinates onto a plane at z = 0.
-
-        :param theta: Polar angle.
-        :param phi: Azimuthal angle.
-        """
-        p_x = np.tan(theta / 2) * np.cos(phi)
-        p_y = np.tan(theta / 2) * np.sin(phi)
-        return p_x, p_y
-
-    @staticmethod
-    def project_cartesian_on_plane(hx, hy, hz):
-        """
-        Stereographic projection of a cartesian vector onto a plane at z = 0.
-
-        :param hx: x component of the vector.
-        :param hy: y component of the vector.
-        :param hz: z component of the vector.
-        """
-        # The mirror symmetry of the cubic space group to the (x, y) plane needs to
-        # be applied here. I.e. negative z values need to be flipped to positive.
-        if hz < 0:
-            hz = -hz
-
-        theta, phi = Math.cartesian_to_spherical(hx, hy, hz)
-        px, py = Math.project_spherical_on_plane(theta, phi)
-        return px, py
-
-    @staticmethod
-    def cartesian_to_spherical(h_x, h_y, h_z):
-        """
-        Converts cartesian coordinates (x, y, z) to spherical coordinates (theta, phi).
-
-        :param h_x: x component of the vector
-        :param h_y: y component of the vector
-        :param h_z: z component of the vector
-        """
-        # python / numpy may represent 1.0 as 1.000000000002 and arccos(1.000000000002) = nan
-        # so we round it to 1.0 to ensure the arccos function works properly.
-        if np.round(h_z, 4) == 1.0:
-            h_z = 1.0
-
-        theta = np.arccos(h_z)
-        phi = np.arctan2(h_y, h_x)
-        return theta, phi
-
-    @staticmethod
     def linear_slope(x1, y1, x2, y2):
         """
         Calculates the slope of a linear function from two points.
@@ -110,6 +62,54 @@ class Math:
         v1v2 = np.dot(v1, v2)
         angle = np.arccos(v1v2 / (v1_norm * v2_norm))
         return angle
+
+    @staticmethod
+    def cartesian_to_spherical(h_x, h_y, h_z):
+        """
+        Converts cartesian coordinates (x, y, z) to spherical coordinates (theta, phi).
+
+        :param h_x: x component of the vector
+        :param h_y: y component of the vector
+        :param h_z: z component of the vector
+        """
+        # python / numpy may represent 1.0 as 1.000000000002 and arccos(1.000000000002) = nan
+        # so we round it to 1.0 to ensure the arccos function works properly.
+        if np.round(h_z, 4) == 1.0:
+            h_z = 1.0
+
+        theta = np.arccos(h_z)
+        phi = np.arctan2(h_y, h_x)
+        return theta, phi
+
+    @staticmethod
+    def project_spherical_on_plane(theta, phi):
+        """
+        Stereographic projection of spherical coordinates onto a plane at z = 0.
+
+        :param theta: Polar angle.
+        :param phi: Azimuthal angle.
+        """
+        p_x = np.tan(theta / 2) * np.cos(phi)
+        p_y = np.tan(theta / 2) * np.sin(phi)
+        return p_x, p_y
+
+    @staticmethod
+    def project_cartesian_on_plane(hx, hy, hz):
+        """
+        Stereographic projection of a cartesian vector onto a plane at z = 0.
+
+        :param hx: x component of the vector.
+        :param hy: y component of the vector.
+        :param hz: z component of the vector.
+        """
+        # The mirror symmetry of the cubic space group to the (x, y) plane needs to
+        # be applied here. I.e. negative z values need to be flipped to positive.
+        if hz < 0:
+            hz = -hz
+
+        theta, phi = Math.cartesian_to_spherical(hx, hy, hz)
+        px, py = Math.project_spherical_on_plane(theta, phi)
+        return px, py
 
 
 class Crystallography:
