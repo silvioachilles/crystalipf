@@ -3,111 +3,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 
 
-def symmetry_operations():
-    """
-    Returns the 24 symmetry operations for cubic crystals.
-    """
-    sym_crys = np.zeros((24, 3, 3))
-    # 1
-    sym_crys[0, 0, 0] = 1
-    sym_crys[0, 1, 1] = 1
-    sym_crys[0, 2, 2] = 1
-    # 2
-    sym_crys[2, 0, 0] = 1
-    sym_crys[2, 1, 1] = -1
-    sym_crys[2, 2, 2] = -1
-    # 3
-    sym_crys[6, 0, 0] = -1
-    sym_crys[6, 1, 1] = 1
-    sym_crys[6, 2, 2] = -1
-    # 4
-    sym_crys[7, 0, 0] = -1
-    sym_crys[7, 1, 1] = -1
-    sym_crys[7, 2, 2] = 1
-    # 5
-    sym_crys[1, 0, 0] = 1
-    sym_crys[1, 1, 2] = -1
-    sym_crys[1, 2, 1] = 1
-    # 6
-    sym_crys[9, 0, 1] = -1
-    sym_crys[9, 1, 0] = 1
-    sym_crys[9, 2, 2] = 1
-    # 7
-    sym_crys[4, 0, 2] = -1
-    sym_crys[4, 1, 1] = 1
-    sym_crys[4, 2, 0] = 1
-    # 8
-    sym_crys[17, 0, 2] = 1
-    sym_crys[17, 1, 0] = 1
-    sym_crys[17, 2, 1] = 1
-    # 9
-    sym_crys[16, 0, 1] = 1
-    sym_crys[16, 1, 2] = 1
-    sym_crys[16, 2, 0] = 1
-    # 10
-    sym_crys[20, 0, 2] = 1
-    sym_crys[20, 1, 1] = -1
-    sym_crys[20, 2, 0] = 1
-    # 11
-    sym_crys[3, 0, 0] = 1
-    sym_crys[3, 1, 2] = 1
-    sym_crys[3, 2, 1] = -1
-    # 12
-    sym_crys[5, 0, 2] = 1
-    sym_crys[5, 1, 1] = 1
-    sym_crys[5, 2, 0] = -1
-    # 13
-    sym_crys[8, 0, 1] = 1
-    sym_crys[8, 1, 0] = -1
-    sym_crys[8, 2, 2] = 1
-    # 14
-    sym_crys[23, 0, 1] = -1
-    sym_crys[23, 1, 0] = -1
-    sym_crys[23, 2, 2] = -1
-    # 15
-    sym_crys[21, 0, 0] = -1
-    sym_crys[21, 1, 2] = -1
-    sym_crys[21, 2, 1] = -1
-    # 16
-    sym_crys[22, 0, 2] = -1
-    sym_crys[22, 1, 1] = -1
-    sym_crys[22, 2, 0] = -1
-    # 17
-    sym_crys[18, 0, 1] = 1
-    sym_crys[18, 1, 0] = 1
-    sym_crys[18, 2, 2] = -1
-    # 18
-    sym_crys[14, 0, 1] = 1
-    sym_crys[14, 1, 2] = -1
-    sym_crys[14, 2, 0] = -1
-    # 19
-    sym_crys[12, 0, 1] = -1
-    sym_crys[12, 1, 2] = -1
-    sym_crys[12, 2, 0] = 1
-    # 20
-    sym_crys[10, 0, 1] = -1
-    sym_crys[10, 1, 2] = 1
-    sym_crys[10, 2, 0] = -1
-    # 21
-    sym_crys[13, 0, 2] = -1
-    sym_crys[13, 1, 0] = 1
-    sym_crys[13, 2, 1] = -1
-    # 22
-    sym_crys[15, 0, 2] = -1
-    sym_crys[15, 1, 0] = -1
-    sym_crys[15, 2, 1] = 1
-    # 23
-    sym_crys[11, 0, 2] = 1
-    sym_crys[11, 1, 0] = -1
-    sym_crys[11, 2, 1] = -1
-    # 24
-    sym_crys[19, 0, 0] = -1
-    sym_crys[19, 1, 2] = 1
-    sym_crys[19, 2, 1] = 1
-
-    return sym_crys
-
-
 class Math:
     @staticmethod
     def project_spherical_on_plane(theta, phi):
@@ -250,6 +145,17 @@ class Crystallography:
 
 
 class IPF:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        """
+        Singleton pattern for the IPF class.
+        """
+        if not cls._instance:
+            cls._instance = super(IPF, cls).__new__(
+                cls, *args, **kwargs)
+        return cls._instance
+
     def __init__(self):
         self.hkls = (
             (0, 0, 1),
@@ -620,6 +526,9 @@ class Plots:
 
     @staticmethod
     def plot_points_in_sst(pxs, pys):
+        """
+        Plots the given points in the standard stereographic triangle.
+        """
         plt.figure()
         sst_xs, sst_ys = Plots.sst_axes()
         plt.plot(sst_xs, sst_ys)
@@ -628,6 +537,11 @@ class Plots:
 
     @staticmethod
     def get_colored_ipf_img():
+        """
+        Creates a colored inverse pole-figure image.
+
+        :return: Colored inverse pole-figure image, x and y maximum values.
+        """
         # print("Creating IPF with colorcode now. This may cause some warnings.")
         x_max = 0.45
         y_max = 0.4
@@ -656,33 +570,235 @@ class Plots:
 
         return image, x_max, y_max
 
-    def plot_colored_ipf(self, axis='off', path=None, showimage=False):
-        plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
+    def plot_colored_ipf(self, axis='off', corners=True, path=None, showimage=False):
+        """
+        Plots the colored inverse pole-figure.
+
+        :param axis: 'off' to disable axis, 'on' to enable axis.
+        :param corners: If True, the corners of the standard stereographic triangle are annotated.
+        :param path: Path to save the plot.
+        :param showimage: If True, the image is shown.
+
+        :return: Matplotlib axes object of the colored inverse pole-figure.
+        """
+        fig, ax = plt.subplots()
+        ax.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
 
         sst_xs, sst_ys = Plots.sst_axes()
-        plt.plot(sst_xs, sst_ys, c='black', lw=2)
+        ax.plot(sst_xs, sst_ys, c='black', lw=2)
 
-        plt.axis(axis)
-        plt.xlim(-0.2, self.x_max+0.2)
-        plt.ylim(-0.2, self.y_max+0.2)
-        plt.annotate("(0 0 1)", (-0.2, -0.075), fontsize=20)
-        plt.annotate("(1 0 1)", (0.42, -0.075), fontsize=20)
-        plt.annotate("(1 1 1)", (0.38, 0.4), fontsize=20)
+        ax.axis(axis)
+        ax.set_xlim(-0.2, self.x_max+0.2)
+        ax.set_ylim(-0.2, self.y_max+0.2)
+
+        if corners:
+            ax.annotate("(0 0 1)", (-0.2, -0.075), fontsize=20)
+            ax.annotate("(1 0 1)", (0.42, -0.075), fontsize=20)
+            ax.annotate("(1 1 1)", (0.38, 0.4), fontsize=20)
 
         if path is not None:
             plt.savefig(path)
         if showimage:
             plt.show()
 
-    def plot_colored_ipf_raw(self, axis='off', path=None, showimage=False):
-        plt.imshow(self.image, extent=(0.0, self.x_max, 0.0, self.y_max))
+        return ax
 
-        sst_xs, sst_ys = Plots.sst_axes()
-        plt.plot(sst_xs, sst_ys, c='black', lw=2)
 
-        plt.axis(axis)
+def symmetry_operations():
+    """
+    Returns the 24 necessary cubic crystal symmetry operations to transform
+    any unit vector into the standard stereographic triangle.
+    """
+    sym_crys = np.zeros((24, 3, 3))
+    # 1
+    sym_crys[0, 0, 0] = 1
+    sym_crys[0, 1, 1] = 1
+    sym_crys[0, 2, 2] = 1
+    # 2
+    sym_crys[2, 0, 0] = 1
+    sym_crys[2, 1, 1] = -1
+    sym_crys[2, 2, 2] = -1
+    # 3
+    sym_crys[6, 0, 0] = -1
+    sym_crys[6, 1, 1] = 1
+    sym_crys[6, 2, 2] = -1
+    # 4
+    sym_crys[7, 0, 0] = -1
+    sym_crys[7, 1, 1] = -1
+    sym_crys[7, 2, 2] = 1
+    # 5
+    sym_crys[1, 0, 0] = 1
+    sym_crys[1, 1, 2] = -1
+    sym_crys[1, 2, 1] = 1
+    # 6
+    sym_crys[9, 0, 1] = -1
+    sym_crys[9, 1, 0] = 1
+    sym_crys[9, 2, 2] = 1
+    # 7
+    sym_crys[4, 0, 2] = -1
+    sym_crys[4, 1, 1] = 1
+    sym_crys[4, 2, 0] = 1
+    # 8
+    sym_crys[17, 0, 2] = 1
+    sym_crys[17, 1, 0] = 1
+    sym_crys[17, 2, 1] = 1
+    # 9
+    sym_crys[16, 0, 1] = 1
+    sym_crys[16, 1, 2] = 1
+    sym_crys[16, 2, 0] = 1
+    # 10
+    sym_crys[20, 0, 2] = 1
+    sym_crys[20, 1, 1] = -1
+    sym_crys[20, 2, 0] = 1
+    # 11
+    sym_crys[3, 0, 0] = 1
+    sym_crys[3, 1, 2] = 1
+    sym_crys[3, 2, 1] = -1
+    # 12
+    sym_crys[5, 0, 2] = 1
+    sym_crys[5, 1, 1] = 1
+    sym_crys[5, 2, 0] = -1
+    # 13
+    sym_crys[8, 0, 1] = 1
+    sym_crys[8, 1, 0] = -1
+    sym_crys[8, 2, 2] = 1
+    # 14
+    sym_crys[23, 0, 1] = -1
+    sym_crys[23, 1, 0] = -1
+    sym_crys[23, 2, 2] = -1
+    # 15
+    sym_crys[21, 0, 0] = -1
+    sym_crys[21, 1, 2] = -1
+    sym_crys[21, 2, 1] = -1
+    # 16
+    sym_crys[22, 0, 2] = -1
+    sym_crys[22, 1, 1] = -1
+    sym_crys[22, 2, 0] = -1
+    # 17
+    sym_crys[18, 0, 1] = 1
+    sym_crys[18, 1, 0] = 1
+    sym_crys[18, 2, 2] = -1
+    # 18
+    sym_crys[14, 0, 1] = 1
+    sym_crys[14, 1, 2] = -1
+    sym_crys[14, 2, 0] = -1
+    # 19
+    sym_crys[12, 0, 1] = -1
+    sym_crys[12, 1, 2] = -1
+    sym_crys[12, 2, 0] = 1
+    # 20
+    sym_crys[10, 0, 1] = -1
+    sym_crys[10, 1, 2] = 1
+    sym_crys[10, 2, 0] = -1
+    # 21
+    sym_crys[13, 0, 2] = -1
+    sym_crys[13, 1, 0] = 1
+    sym_crys[13, 2, 1] = -1
+    # 22
+    sym_crys[15, 0, 2] = -1
+    sym_crys[15, 1, 0] = -1
+    sym_crys[15, 2, 1] = 1
+    # 23
+    sym_crys[11, 0, 2] = 1
+    sym_crys[11, 1, 0] = -1
+    sym_crys[11, 2, 1] = -1
+    # 24
+    sym_crys[19, 0, 0] = -1
+    sym_crys[19, 1, 2] = 1
+    sym_crys[19, 2, 1] = 1
 
-        if path is not None:
-            plt.savefig(path)
-        if showimage:
-            plt.show()
+    return sym_crys
+
+
+__ipf__ = None
+__plots__ = None
+
+
+def image():
+    """
+    Create an image of the cubic inverse pole-figure.
+    """
+    global __plots__
+    if __plots__ is None:
+        __plots__ = Plots()
+
+    return __plots__.image
+
+
+def image_plt(
+        axis='off',
+        corners=True,
+        path=None,
+        showimage=False,
+):
+    """
+    Create a plot of the cubic inverse pole-figure using matplotlib.
+    """
+
+    global __plots__
+    if __plots__ is None:
+        __plots__ = Plots()
+
+    return __plots__.plot_colored_ipf(
+        axis,
+        corners,
+        path,
+        showimage
+    )
+
+
+def rgb(U, h=(0, 0, 1)):
+    """
+    Calculates the inverse pole-figure RGB color of an orientation matrix
+    and a given crystal direction.
+
+    :param U: 3x3 ndarray
+        Orientation matrix
+    :param h: 3-tuple
+        Crystal direction
+
+    :return: 3-tuple
+        RGB color
+    """
+
+    global __ipf__
+    if __ipf__ is None:
+        __ipf__ = IPF()
+
+    return __ipf__.rgb_from_U(U, h)
+
+
+def position(
+        U,
+        h=(0, 0, 1)
+):
+    """
+    Calculates the position of an orientation matrix in the inverse pole-figure.
+
+    :param U: 3x3 ndarray
+        Orientation matrix
+    :param h: 3-tuple
+        Crystal direction
+
+    :return: 3-tuple
+        Position in the inverse pole-figure
+    """
+
+    global __ipf__
+    if __ipf__ is None:
+        __ipf__ = IPF()
+
+    return __ipf__.g_h_to_ipf_xy(U, h)
+
+
+def edges():
+    """
+    Creates the edges of the inverse pole-figure.
+
+    :return: (xs, ys) coordinates of the points spanning the edges of the inverse pole-figure.
+    """
+    global __plots__
+    if __plots__ is None:
+        __plots__ = Plots()
+
+    return __plots__.sst_axes()
