@@ -16,7 +16,16 @@ class Math:
 
         :return: Slope of the function.
         """
-        return (y2 - y1) / (x2 - x1)
+        dy = y2 - y1
+        dx = x2 - x1
+
+        if dx == 0 and dy != 0:
+            raise ValueError("The slope is undefined for vertical lines.")
+
+        if dx == 0 and dy == 0:
+            raise ValueError("The two given points are equal.")
+
+        return dy / dx
 
     @staticmethod
     def linear_y_intercept(m, x, y):
@@ -338,6 +347,11 @@ class IPF:
         x_temp = px - self.bary_x
         y_temp = py - self.bary_y
 
+        # When the given point is the bary center,
+        # the azimuthal angle is not defined.
+        if x_temp == 0 and y_temp == 0:
+            return 0.0
+
         v2_temp = np.array([x_temp, y_temp])
 
         azimuthal = Math.angle_between_vectors(v1_temp, v2_temp)
@@ -373,6 +387,9 @@ class IPF:
 
         :return: Lightness value
         """
+        if px == self.bary_x and py == self.bary_y:
+            return 0.0
+
         m = Math.linear_slope(self.bary_x, self.bary_y, px, py)
         b = Math.linear_y_intercept(m, px, py)
 
