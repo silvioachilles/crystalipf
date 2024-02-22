@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation
 
-from ipf.ipf.cubic import position, rgb, image, image_plt, edges
+from ipf.cubic import position, rgb, image, image_plt, edges
 
 # orientation matrix
 grain = Rotation.from_euler(
