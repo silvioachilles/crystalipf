@@ -6,5 +6,6 @@ setup(
     packages=['ipf'],
     author='Silvio Achilles',
     author_email='achilles.develop@proton.me',
-    description='Easy-to-use library for calculating the rgb values of the IPF map of cubic materials.'
+    description='Easy-to-use library for calculating the rgb values of the IPF map of cubic materials.',
+    install_requires=["numpy", "matplotlib"]
 )
