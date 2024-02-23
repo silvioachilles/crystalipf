@@ -312,9 +312,24 @@ class IPF:
 
         :return: x, y coordinates of the intersection
         """
+
+        """
+        Here, the determination of the intersection of the linear function and the
+        curved edge of the ipf is only a numerical approximation. To do this
+        analytically, the curved edge needs to be described as an 
+        analytical function. Not sure if this is possible.
+        
+        There are some cases where this numerical approximation will deviate
+        somewhat from the actual intersection. However, since this only 
+        affects the lightness, it should not matter too much.
+        
+        Check the ToDo below to identify the cases when it fails.
+        """
+
         dx = 0.001
         x_temp = px
         y_temp = py
+
         while True:
             x_temp += dx
             y_temp += m * dx
@@ -327,8 +342,9 @@ class IPF:
             if x_temp > self.p101_x*1.1:
                 # TODO: This condition is entered in rare cases, probably due to bad rounding
                 #  at some places
-                print("Cannot find intersection of sst and linear curve. "
-                      "x: {}\ty: {}, returning x, y from p101".format(px, py))
+                #  The print is commented out to not confuse the user.
+                # print("Cannot find intersection of sst and linear curve. "
+                #      "x: {}\ty: {}, returning x, y from p101".format(px, py))
 
                 return self.p101_x, self.p101_y
 
@@ -355,6 +371,9 @@ class IPF:
         v2_temp = np.array([x_temp, y_temp])
 
         azimuthal = Math.angle_between_vectors(v1_temp, v2_temp)
+        # The angle between the two vectors is always between 0 and pi.
+        # If the x-coordinate of the point is greater than the x-coordinate of the bary center,
+        # the azimuthal angle is between pi and 2*pi.
         if px > self.bary_x:
             azimuthal = 2 * np.pi - azimuthal
 
@@ -370,9 +389,6 @@ class IPF:
         :return: Hue value
         """
         hue = self.bary_azimuthal(px, py)
-
-        if hue > (2 * np.pi):
-            hue -= 2 * np.pi
 
         hue /= (2 * np.pi)
 
@@ -529,18 +545,21 @@ class Plots:
 
         :return: Colored inverse pole-figure image, x and y maximum values.
         """
+        ipf = IPF()
+
         # print("Creating IPF with colorcode now. This may cause some warnings.")
-        x_max = 0.45
-        y_max = 0.4
-        rows = np.linspace(0.0, y_max, 450)
-        cols = np.linspace(0.0, x_max, 450)
+        x_min = ipf.p001_x
+        y_min = ipf.p001_y
+        x_max = ipf.p101_x
+        y_max = ipf.p111_y
+        rows = np.linspace(y_min, y_max, 450)
+        cols = np.linspace(x_min, x_max, 450)
 
         image = np.zeros((len(rows), len(cols), 3))
         image += 1.0
         image_transposed = np.zeros((len(cols), len(rows), 3))
         image_transposed += 1.0
 
-        ipf = IPF()
         for row_idx, row in enumerate(rows):
             for col_idx, col in enumerate(cols):
                 if ipf.is_in_sst(col, row):
