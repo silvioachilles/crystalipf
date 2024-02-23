@@ -1,6 +1,6 @@
 import numpy as np
 
-from ipf import cubic
+from crystalipf import cubic
 from scipy.spatial.transform import Rotation
 
 import matplotlib.pyplot as plt

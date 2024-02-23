@@ -1,6 +1,6 @@
 import numpy as np
 
-from ipf import cubic
+from crystalipf import cubic
 
 
 class TestCubic:

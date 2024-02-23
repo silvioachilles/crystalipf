@@ -1,4 +1,4 @@
-from ipf.cubic import Crystallography
+from crystalipf.cubic import Crystallography
 
 
 if __name__ == "__main__":

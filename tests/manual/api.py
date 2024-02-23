@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from ipf.cubic import image, image_plt, rgb, edges, position
+from crystalipf.cubic import image, image_plt, rgb, edges, position
 
 
 def example_orientation_matrices():
