@@ -57,7 +57,7 @@ ax.plot(ipf_edges_xs, ipf_edges_ys)
 ax.axis('off')
 plt.show()
 ```
-<img src="https://github.com/silvioachilles/crystalipf/blob/Rework/doc/ipf_grain.png?raw=true" width="300" height="200" />
+<img src="https://github.com/silvioachilles/crystalipf/blob/main/doc/ipf_grain.png?raw=true" width="300" height="200" />
 
 Using the `image_plt` function, you can create a matplotlib plot of a fully
 colored ipf with annotations for the corners.
@@ -68,7 +68,7 @@ image_plt(ax)
 plt.show()
 ```
 
-<img src="https://github.com/silvioachilles/crystalipf/blob/Rework/doc/ipf_colored_annotations.png?raw=true" width="300" height="200" />
+<img src="https://github.com/silvioachilles/crystalipf/blob/main/doc/ipf_colored_annotations.png?raw=true" width="300" height="200" />
 
 An raw image of a fully colored ipf can be retrieved with the `image` function,
 allowing to create a customized ipf plot.
@@ -83,7 +83,7 @@ ax.plot(ipf_edges_xs, ipf_edges_ys, c='black')
 plt.show()
 ```
 
-<img src="https://github.com/silvioachilles/crystalipf/blob/Rework/doc/ipf_colored.png?raw=true" width="300" height="200" />
+<img src="https://github.com/silvioachilles/crystalipf/blob/main/doc/ipf_colored.png?raw=true" width="300" height="200" />
 
 ## Troubleshooting
 Please open a github issue if anything appears not correct. 
