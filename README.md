@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 
 from crystalipf.cubic import position, rgb, image, image_plt, edges
 
-# Example orientation matrix of a grain
+# example orientation matrix of a grain
 grain = np.array([
     [ 0.71825437, -0.68019413,  0.14644661],
     [ 0.68019413,  0.6421339,  -0.35355339],
@@ -45,12 +45,12 @@ grain_ipf_x, grain_ipf_y = position(grain, g)
 # ipf color
 grain_ipf_rgb = rgb(grain, g)
 
-# To illustrate, the grain's orientation is plotted
-# in the ipf with respective coloring.
+# to illustrate, the grain's orientation is plotted
+# in the ipf with respective coloring
 fig, ax = plt.subplots()
 ax.scatter([grain_ipf_x], [grain_ipf_y], c=[grain_ipf_rgb])
 
-# The edges of the ipf
+# the edges of the ipf
 ipf_edges_xs, ipf_edges_ys = edges()
 ax.plot(ipf_edges_xs, ipf_edges_ys)
 
