@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ipf"
+version = "0.0.1"
+authors = [
+  { name="Silvio Achilles", email="achilles.develop@proton.me" },
+]
+description = "Easy-to-use library for calculating the rgb values of the IPF map of cubic materials."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/silvioachilles/ipf"
+Issues = "https://github.com/silvioachilles/ipf/issues"
