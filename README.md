@@ -15,7 +15,7 @@ The library can be installed in three different ways:
     cd crystalipf
     pip install .
     ``` 
-3. Copy the `ipf/cubic.py` to your project and include it in your code.
+3. Copy `crystalipf/cubic.py` to your project and include it in your code.
 
 
 ## Usage
