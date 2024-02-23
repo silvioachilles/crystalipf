@@ -1,1 +1,1 @@
-from ipf import cubic
+from crystalipf import cubic
