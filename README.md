@@ -1,3 +1,4 @@
+# Crystalipf
 This is an easy-to-use library to create inverse
 pole-figures (ipf) for crystal lattices with
 cubic symmetry.
